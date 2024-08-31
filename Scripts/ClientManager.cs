@@ -10,10 +10,27 @@ public class ClientManager : MonoBehaviour
     private NetworkStream _stream;
     private bool _isConnected = false;
     private PlayerManager _playerManager;
+    private float lastRecvTime = 0;
+
+    public string serverIP = "127.0.0.1"; // 서버 IP 주소
+    public int serverPort = 7777;        // 서버 포트 번호
 
     void Start()
     {
         _playerManager = FindObjectOfType<PlayerManager>();
+    }
+
+    private void Update()
+    {
+        
+    }
+
+    public void CheckSocket()
+    {
+        if (_isConnected)
+            Heartbeat();
+        else
+            ConnectToServer(serverIP, serverPort);
     }
 
     public async void ConnectToServer(string ipAddress, int port)
@@ -35,8 +52,28 @@ public class ClientManager : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError("Failed to connect to server: " + e.Message);
                 await Task.Delay(5000); // 연결 실패 시 5초 후 재시도
+            }
+        }
+    }
+
+    private async void Heartbeat()
+    {
+        float term = 1f;
+        float lastSendTime = 0f;
+        string message = "ping";
+
+        while (_isConnected && _stream != null && (lastSendTime == 0f || lastRecvTime - lastSendTime > term))
+        {
+            byte[] data = Encoding.ASCII.GetBytes(message);
+            try
+            {
+                await _stream.WriteAsync(data, 0, data.Length);
+                lastSendTime = Time.time;
+            }
+            catch (Exception e)
+            {
+                _isConnected = false;
             }
         }
     }
@@ -54,6 +91,7 @@ public class ClientManager : MonoBehaviour
                 if (bytesRead > 0)
                 {
                     string receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                    lastRecvTime = Time.time;
                     ProcessMessage(receivedMessage);
                 }
                 else
@@ -127,5 +165,10 @@ public class ClientManager : MonoBehaviour
     {
         // 애플리케이션 종료 시 연결 종료 처리
         HandleDisconnect();
+    }
+
+    public bool IsConnected()
+    {
+        return _isConnected;
     }
 }
