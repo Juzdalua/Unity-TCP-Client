@@ -4,90 +4,115 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+public enum SceneType
+{
+    Menu,
+    Game
+}
+
+public enum PacketId
+{
+    PKT_C_LOGIN = 1000,
+    PKT_S_LOGIN = 1001,
+    PKT_C_ENTER_GAME = 1002,
+    PKT_S_ENTER_GAME = 1003,
+    PKT_C_CHAT = 1004,
+    PKT_S_CHAT = 1005,
+};
+
 public class ClientManager : MonoBehaviour
 {
-    private TcpClient _client;
-    private NetworkStream _stream;
+    [Header("Server Info")]
+    private Socket _clientSocket;
     private bool _isConnected = false;
-    private PlayerManager _playerManager;
-    private float lastRecvTime = 0;
-
     public string serverIP = "127.0.0.1"; // 서버 IP 주소
     public int serverPort = 7777;        // 서버 포트 번호
+    private float lastRecvTime = 0;
+
+    [Header("Scene Type")]
+    [SerializeField] SceneType _sceneType;
+    private MainMenuManager _menuManager;
+    private PlayerManager _playerManager;
 
     void Start()
     {
-        _playerManager = FindObjectOfType<PlayerManager>();
+        if (_sceneType == SceneType.Menu)
+            _menuManager = GetComponent<MainMenuManager>();
+        else if (_sceneType == SceneType.Game)
+            _playerManager = GetComponent<PlayerManager>();
     }
 
-    private void Update()
+    public void CheckSocket(SceneType sceneType)
     {
-        
-    }
-
-    public void CheckSocket()
-    {
-        if (_isConnected)
-            Heartbeat();
-        else
-            ConnectToServer(serverIP, serverPort);
-    }
-
-    public async void ConnectToServer(string ipAddress, int port)
-    {
-        while (!_isConnected)
+        if (!_isConnected)
         {
-            try
-            {
-                _client = new TcpClient();
-                await _client.ConnectAsync(ipAddress, port);
-                _stream = _client.GetStream();
-                _isConnected = true;
-                Debug.Log("Connected to server");
-
-                // 서버 연결 후 플레이어 캐릭터 생성
-                CreatePlayer();
-
-                ReceiveData(); // 서버로부터 데이터 수신 시작
-            }
-            catch (Exception e)
-            {
-                await Task.Delay(5000); // 연결 실패 시 5초 후 재시도
-            }
+            ConnectToServer(serverIP, serverPort, sceneType);
+        }
+        else
+        {
+            Heartbeat();
+            ReceiveData();
         }
     }
 
-    private async void Heartbeat()
+    public void ConnectToServer(string ipAddress, int port, SceneType sceneType)
+    {
+        try
+        {
+            _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _clientSocket.Connect(ipAddress, port);
+            _isConnected = true;
+            Debug.Log("Connected to server");
+
+            if (sceneType == SceneType.Menu)
+            {
+            }
+            else if (sceneType == SceneType.Game)
+            {
+                // 서버 연결 후 플레이어 캐릭터 생성
+                CreatePlayer();
+            }
+
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Failed to connect: " + e.Message);
+            Task.Delay(5000).ContinueWith(_ => ConnectToServer(ipAddress, port, sceneType)); // 연결 실패 시 5초 후 재시도
+        }
+    }
+
+    private void Heartbeat()
     {
         float term = 1f;
         float lastSendTime = 0f;
         string message = "ping";
 
-        while (_isConnected && _stream != null && (lastSendTime == 0f || lastRecvTime - lastSendTime > term))
+        if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite) && (lastSendTime == 0f || lastRecvTime - lastSendTime > term))
         {
             byte[] data = Encoding.ASCII.GetBytes(message);
             try
             {
-                await _stream.WriteAsync(data, 0, data.Length);
+                _clientSocket.Send(data);
                 lastSendTime = Time.time;
             }
             catch (Exception e)
             {
-                _isConnected = false;
+                Debug.Log("Heartbeat failed: " + e.Message);
+                HandleDisconnect();
             }
         }
     }
 
-    private async void ReceiveData()
+    public void ReceiveData()
     {
         byte[] buffer = new byte[1024];
         int bytesRead;
 
         try
         {
-            while (_isConnected)
+            if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectRead))
             {
-                bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length);
+                bytesRead = _clientSocket.Receive(buffer);
                 if (bytesRead > 0)
                 {
                     string receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead);
@@ -102,7 +127,7 @@ public class ClientManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError("Error receiving data: " + e.Message);
+            Debug.Log("Error receiving data: " + e.Message);
             HandleDisconnect();
         }
     }
@@ -134,28 +159,64 @@ public class ClientManager : MonoBehaviour
         SendData(message);
     }
 
-    private void HandleDisconnect()
+    public void HandleDisconnect()
     {
         if (_isConnected)
         {
             _isConnected = false;
-            _client.Close();
+            _clientSocket.Shutdown(SocketShutdown.Both);
+            _clientSocket.Close();
             Debug.Log("Disconnected from server");
         }
     }
 
-    public async void SendData(string message)
+    public void SendData(string message)
     {
-        if (_isConnected && _stream != null)
+        if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite))
         {
             byte[] data = Encoding.ASCII.GetBytes(message);
             try
             {
-                await _stream.WriteAsync(data, 0, data.Length);
+                _clientSocket.Send(data);
             }
             catch (Exception e)
             {
-                Debug.LogError("Failed to send data: " + e.Message);
+                Debug.Log("Failed to send data: " + e.Message);
+                HandleDisconnect();
+            }
+        }
+    }
+    public void SendPacket(PacketId packetId, byte[] protobufData)
+    {
+        Debug.Log("START SendPacket");
+        if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite))
+        {
+            try
+            {
+                // 1. 헤더 생성
+                byte[] header = new byte[4];
+
+                // id (2바이트) - Big Endian 방식으로 변환
+                int id = (int)packetId;
+                header[0] = (byte)(id >> 8);
+                header[1] = (byte)(id & 0xFF);
+
+                // size (2바이트) - data의 길이 (Big Endian) + Header size(4byte)
+                int size = protobufData.Length + 4;
+                header[2] = (byte)(size >> 8);
+                header[3] = (byte)(size & 0xFF);
+
+                // 2. 헤더와 데이터 결합
+                byte[] packet = new byte[header.Length + protobufData.Length];
+                Buffer.BlockCopy(header, 0, packet, 0, header.Length);
+                Buffer.BlockCopy(protobufData, 0, packet, header.Length, protobufData.Length);
+
+                _clientSocket.Send(packet);
+                Debug.Log("Success SendPacket");
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Failed to send data: " + e.Message);
                 HandleDisconnect();
             }
         }

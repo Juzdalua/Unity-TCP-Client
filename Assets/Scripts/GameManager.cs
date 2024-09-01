@@ -1,21 +1,27 @@
 using UnityEngine;
 public class GameManager : MonoBehaviour
 {
-    public string serverIP = "127.0.0.1"; // 서버 IP 주소
-    public int serverPort = 7777;        // 서버 포트 번호
     private ClientManager _networkManager;
 
     void Start()
     {
-        _networkManager = FindObjectOfType<ClientManager>();
+        _networkManager = GetComponent<ClientManager>();
 
         if (_networkManager != null)
         {
-            _networkManager.ConnectToServer(serverIP, serverPort);
+            _networkManager.ConnectToServer(_networkManager.serverIP, _networkManager.serverPort, SceneType.Game);
         }
         else
         {
-            Debug.LogError("ClientManager not found in the scene.");
+            Debug.Log("ClientManager not found in the scene.");
+        }
+    }
+
+    private void Update()
+    {
+        if(_networkManager != null)
+        {
+            _networkManager.CheckSocket(SceneType.Game);
         }
     }
 }

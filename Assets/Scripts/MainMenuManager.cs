@@ -1,10 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Security.Cryptography;
 using System.Text;
+
+using Google.Protobuf.Protocol;
+using System;
+using Google.Protobuf;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -15,8 +18,6 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI connectedTMP;
     [SerializeField] private List<Image> loadImages;
 
-    public string serverIP = "127.0.0.1"; // 서버 IP 주소
-    public int serverPort = 7777;        // 서버 포트 번호
     private ClientManager _networkManager;
 
     private void Start()
@@ -28,9 +29,9 @@ public class MainMenuManager : MonoBehaviour
     {
         TabInput();
         EnterInput();
+        UpdateConnectedTMPUI();
 
         CheckSocket();
-        UpdateConnectedTMP();
     }
 
     void TabInput()
@@ -47,9 +48,9 @@ public class MainMenuManager : MonoBehaviour
     void EnterInput()
     {
         if (Input.GetKeyDown(KeyCode.KeypadEnter))
-            OnCLickButton("login");
+            OnClickButton("login");
     }
-    public void OnCLickButton(string type)
+    public void OnClickButton(string type)
     {
         string id = idInput.text;
         string pwd = pwdInput.text;
@@ -68,7 +69,21 @@ public class MainMenuManager : MonoBehaviour
 
     void Login(string id, string pwd)
     {
+        Debug.Log("START Login");
 
+        Account account = new Account()
+        {
+            Id = ulong.Parse(id),
+            Password = CreatedHashPwd(pwd),
+        };
+
+        C_LOGIN loginPkt = new C_LOGIN()
+        {
+            Type = LoginType.Login,
+            Account = account,
+        };
+        byte[] data = loginPkt.ToByteArray();
+        _networkManager.SendPacket(PacketId.PKT_C_LOGIN, data);
     }
 
     void Signup(string id, string pwd)
@@ -80,7 +95,7 @@ public class MainMenuManager : MonoBehaviour
     {
         if (_networkManager != null)
         {
-            _networkManager.CheckSocket();
+            _networkManager.CheckSocket(SceneType.Menu);
         }
     }
 
@@ -101,7 +116,7 @@ public class MainMenuManager : MonoBehaviour
             return builder.ToString();
         }
     }
-    void UpdateConnectedTMP()
+    void UpdateConnectedTMPUI()
     {
         if (_networkManager.IsConnected())
         {
@@ -116,4 +131,26 @@ public class MainMenuManager : MonoBehaviour
             loadImages[1].gameObject.SetActive(false);
         }
     }
+
+    byte[] protobufTestCreateAndSerialize()
+    {
+        S_CHAT chat = new S_CHAT
+        {
+            PlayerId = 1,
+            Msg = "Hi",
+        };
+
+        byte[] data = chat.ToByteArray();
+        Debug.Log($"Serialized Player Data: {BitConverter.ToString(data)}");
+        return data;
+    }
+
+    void protobufTestDeserializeAndUse(byte[] data)
+    {
+        S_CHAT chat = S_CHAT.Parser.ParseFrom(data);
+
+        Debug.Log($"Player ID: {chat.PlayerId}");
+        Debug.Log($"Message: {chat.Msg})");
+    }
+
 }

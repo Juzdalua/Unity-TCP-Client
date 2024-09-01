@@ -1,26 +1,46 @@
 syntax = "proto3"; // version
 package Protocol; // namespace
+option csharp_namespace = "Google.Protobuf.Protocol";
 
-import "Enum.proto";
-import "Struct.proto";
+// import "Enum.proto";
+// import "Struct.proto";
 
 import "google/protobuf/timestamp.proto";
-option csharp_namespace = "Google.Protobuf.Protocol";
+
+enum LoginType
+{
+	LOGIN_TYPE_NONE = 0; // enum은 항상 0부터 시작해야한다. 보통 NONE
+	LOGIN_TYPE_LOGIN = 1;
+	LOGIN_TYPE_SIGNUP = 2;
+}
+
+message Account
+{
+	uint64 id = 1;
+	string password = 2;
+}
+
+message Player
+{
+	uint64 id = 1;
+	string name = 2;
+}
 
 message C_LOGIN
 {
-	
+	LoginType type = 1;
+	Account account = 2;
 }
 
 message S_LOGIN
 {
 	bool success = 1;
-	repeated Player players = 2;
+	Player player = 2;
 }
 
 message C_ENTER_GAME
 {
-	uint64 playerIndex = 1;
+	uint64 playerId = 1;
 }
 
 message S_ENTER_GAME
