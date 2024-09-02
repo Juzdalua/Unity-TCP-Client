@@ -15,14 +15,20 @@ public enum SceneType
 
 public enum PacketId
 {
-    PKT_C_TEST = 0001,
-    PKT_S_TEST = 0002,
-    PKT_C_LOGIN = 1000,
-    PKT_S_LOGIN = 1001,
-    PKT_C_ENTER_GAME = 1002,
-    PKT_S_ENTER_GAME = 1003,
-    PKT_C_CHAT = 1004,
-    PKT_S_CHAT = 1005,
+    PKT_C_TEST = 1000,
+    PKT_S_TEST = 1001,
+
+    PKT_C_SIGNUP = 1002,
+    PKT_S_SIGNUP = 1003,
+
+    PKT_C_LOGIN = 1004,
+    PKT_S_LOGIN = 1005,
+
+    PKT_C_ENTER_GAME = 1006,
+    PKT_S_ENTER_GAME = 1007,
+
+    PKT_C_CHAT = 1008,
+    PKT_S_CHAT = 1009,
 };
 
 public class PacketMessage
@@ -278,8 +284,6 @@ public class ClientManager : MonoBehaviour
     }
     public void SendPacket(PacketId packetId, byte[] protobufData)
     {
-        Debug.Log("START SendPacket");
-
         if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite))
         {
             try
@@ -307,7 +311,6 @@ public class ClientManager : MonoBehaviour
                 Debug.Log("Sending Packet Length: " + packet.Length);
 
                 _clientSocket.Send(packet);
-                Debug.Log("Success SendPacket");
             }
             catch (Exception e)
             {

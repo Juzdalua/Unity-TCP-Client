@@ -25,24 +25,22 @@ namespace Google.Protobuf.Protocol {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Cg5Qcm90b2NvbC5wcm90bxIIUHJvdG9jb2waH2dvb2dsZS9wcm90b2J1Zi90",
-            "aW1lc3RhbXAucHJvdG8iJwoHQWNjb3VudBIKCgJpZBgBIAEoBBIQCghwYXNz",
-            "d29yZBgCIAEoCSIiCgZQbGF5ZXISCgoCaWQYASABKAQSDAoEbmFtZRgCIAEo",
-            "CSJQCgdDX0xPR0lOEiEKBHR5cGUYASABKA4yEy5Qcm90b2NvbC5Mb2dpblR5",
-            "cGUSIgoHYWNjb3VudBgCIAEoCzIRLlByb3RvY29sLkFjY291bnQiPAoHU19M",
-            "T0dJThIPCgdzdWNjZXNzGAEgASgIEiAKBnBsYXllchgCIAEoCzIQLlByb3Rv",
-            "Y29sLlBsYXllciIgCgxDX0VOVEVSX0dBTUUSEAoIcGxheWVySWQYASABKAQi",
-            "HwoMU19FTlRFUl9HQU1FEg8KB3N1Y2Nlc3MYASABKAgiFQoGQ19DSEFUEgsK",
-            "A21zZxgBIAEoCSInCgZTX0NIQVQSEAoIcGxheWVySWQYASABKAQSCwoDbXNn",
-            "GAIgASgJKk0KCUxvZ2luVHlwZRITCg9MT0dJTl9UWVBFX05PTkUQABIUChBM",
-            "T0dJTl9UWVBFX0xPR0lOEAESFQoRTE9HSU5fVFlQRV9TSUdOVVAQAkIbqgIY",
-            "R29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZwcm90bzM="));
+            "aW1lc3RhbXAucHJvdG8iNQoHQWNjb3VudBIKCgJpZBgBIAEoBBIMCgRuYW1l",
+            "GAIgASgJEhAKCHBhc3N3b3JkGAMgASgJIiIKBlBsYXllchIKCgJpZBgBIAEo",
+            "BBIMCgRuYW1lGAIgASgJIi0KB0NfTE9HSU4SIgoHYWNjb3VudBgBIAEoCzIR",
+            "LlByb3RvY29sLkFjY291bnQiSwoHU19MT0dJThIPCgdzdWNjZXNzGAEgASgI",
+            "EiAKBnBsYXllchgCIAEoCzIQLlByb3RvY29sLlBsYXllchINCgVlcnJvchgD",
+            "IAEoCSIgCgxDX0VOVEVSX0dBTUUSEAoIcGxheWVySWQYASABKAQiHwoMU19F",
+            "TlRFUl9HQU1FEg8KB3N1Y2Nlc3MYASABKAgiFQoGQ19DSEFUEgsKA21zZxgB",
+            "IAEoCSInCgZTX0NIQVQSEAoIcGxheWVySWQYASABKAQSCwoDbXNnGAIgASgJ",
+            "QhuqAhhHb29nbGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.LoginType), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Account), global::Google.Protobuf.Protocol.Account.Parser, new[]{ "Id", "Password" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Account), global::Google.Protobuf.Protocol.Account.Parser, new[]{ "Id", "Name", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Player), global::Google.Protobuf.Protocol.Player.Parser, new[]{ "Id", "Name" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_LOGIN), global::Google.Protobuf.Protocol.C_LOGIN.Parser, new[]{ "Type", "Account" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_LOGIN), global::Google.Protobuf.Protocol.S_LOGIN.Parser, new[]{ "Success", "Player" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_LOGIN), global::Google.Protobuf.Protocol.C_LOGIN.Parser, new[]{ "Account" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_LOGIN), global::Google.Protobuf.Protocol.S_LOGIN.Parser, new[]{ "Success", "Player", "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_ENTER_GAME), global::Google.Protobuf.Protocol.C_ENTER_GAME.Parser, new[]{ "PlayerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ENTER_GAME), global::Google.Protobuf.Protocol.S_ENTER_GAME.Parser, new[]{ "Success" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_CHAT), global::Google.Protobuf.Protocol.C_CHAT.Parser, new[]{ "Msg" }, null, null, null, null),
@@ -52,18 +50,6 @@ namespace Google.Protobuf.Protocol {
     #endregion
 
   }
-  #region Enums
-  public enum LoginType {
-    /// <summary>
-    /// enum은 항상 0부터 시작해야한다. 보통 NONE
-    /// </summary>
-    [pbr::OriginalName("LOGIN_TYPE_NONE")] None = 0,
-    [pbr::OriginalName("LOGIN_TYPE_LOGIN")] Login = 1,
-    [pbr::OriginalName("LOGIN_TYPE_SIGNUP")] Signup = 2,
-  }
-
-  #endregion
-
   #region Messages
   public sealed partial class Account : pb::IMessage<Account>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -100,6 +86,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public Account(Account other) : this() {
       id_ = other.id_;
+      name_ = other.name_;
       password_ = other.password_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -122,8 +109,20 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 2;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "password" field.</summary>
-    public const int PasswordFieldNumber = 2;
+    public const int PasswordFieldNumber = 3;
     private string password_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -150,6 +149,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (Id != other.Id) return false;
+      if (Name != other.Name) return false;
       if (Password != other.Password) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -159,6 +159,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Id != 0UL) hash ^= Id.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (Password.Length != 0) hash ^= Password.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -182,8 +183,12 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteUInt64(Id);
       }
-      if (Password.Length != 0) {
+      if (Name.Length != 0) {
         output.WriteRawTag(18);
+        output.WriteString(Name);
+      }
+      if (Password.Length != 0) {
+        output.WriteRawTag(26);
         output.WriteString(Password);
       }
       if (_unknownFields != null) {
@@ -200,8 +205,12 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteUInt64(Id);
       }
-      if (Password.Length != 0) {
+      if (Name.Length != 0) {
         output.WriteRawTag(18);
+        output.WriteString(Name);
+      }
+      if (Password.Length != 0) {
+        output.WriteRawTag(26);
         output.WriteString(Password);
       }
       if (_unknownFields != null) {
@@ -216,6 +225,9 @@ namespace Google.Protobuf.Protocol {
       int size = 0;
       if (Id != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Id);
+      }
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
       if (Password.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Password);
@@ -234,6 +246,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (other.Id != 0UL) {
         Id = other.Id;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       if (other.Password.Length != 0) {
         Password = other.Password;
@@ -258,6 +273,10 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 18: {
+            Name = input.ReadString();
+            break;
+          }
+          case 26: {
             Password = input.ReadString();
             break;
           }
@@ -281,6 +300,10 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 18: {
+            Name = input.ReadString();
+            break;
+          }
+          case 26: {
             Password = input.ReadString();
             break;
           }
@@ -551,7 +574,6 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public C_LOGIN(C_LOGIN other) : this() {
-      type_ = other.type_;
       account_ = other.account_ != null ? other.account_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -562,20 +584,8 @@ namespace Google.Protobuf.Protocol {
       return new C_LOGIN(this);
     }
 
-    /// <summary>Field number for the "type" field.</summary>
-    public const int TypeFieldNumber = 1;
-    private global::Google.Protobuf.Protocol.LoginType type_ = global::Google.Protobuf.Protocol.LoginType.None;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Google.Protobuf.Protocol.LoginType Type {
-      get { return type_; }
-      set {
-        type_ = value;
-      }
-    }
-
     /// <summary>Field number for the "account" field.</summary>
-    public const int AccountFieldNumber = 2;
+    public const int AccountFieldNumber = 1;
     private global::Google.Protobuf.Protocol.Account account_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -601,7 +611,6 @@ namespace Google.Protobuf.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (Type != other.Type) return false;
       if (!object.Equals(Account, other.Account)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -610,7 +619,6 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (Type != global::Google.Protobuf.Protocol.LoginType.None) hash ^= Type.GetHashCode();
       if (account_ != null) hash ^= Account.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -630,12 +638,8 @@ namespace Google.Protobuf.Protocol {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Type != global::Google.Protobuf.Protocol.LoginType.None) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) Type);
-      }
       if (account_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(Account);
       }
       if (_unknownFields != null) {
@@ -648,12 +652,8 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Type != global::Google.Protobuf.Protocol.LoginType.None) {
-        output.WriteRawTag(8);
-        output.WriteEnum((int) Type);
-      }
       if (account_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(10);
         output.WriteMessage(Account);
       }
       if (_unknownFields != null) {
@@ -666,9 +666,6 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (Type != global::Google.Protobuf.Protocol.LoginType.None) {
-        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
-      }
       if (account_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Account);
       }
@@ -683,9 +680,6 @@ namespace Google.Protobuf.Protocol {
     public void MergeFrom(C_LOGIN other) {
       if (other == null) {
         return;
-      }
-      if (other.Type != global::Google.Protobuf.Protocol.LoginType.None) {
-        Type = other.Type;
       }
       if (other.account_ != null) {
         if (account_ == null) {
@@ -708,11 +702,7 @@ namespace Google.Protobuf.Protocol {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            Type = (global::Google.Protobuf.Protocol.LoginType) input.ReadEnum();
-            break;
-          }
-          case 18: {
+          case 10: {
             if (account_ == null) {
               Account = new global::Google.Protobuf.Protocol.Account();
             }
@@ -734,11 +724,7 @@ namespace Google.Protobuf.Protocol {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 8: {
-            Type = (global::Google.Protobuf.Protocol.LoginType) input.ReadEnum();
-            break;
-          }
-          case 18: {
+          case 10: {
             if (account_ == null) {
               Account = new global::Google.Protobuf.Protocol.Account();
             }
@@ -788,6 +774,7 @@ namespace Google.Protobuf.Protocol {
     public S_LOGIN(S_LOGIN other) : this() {
       success_ = other.success_;
       player_ = other.player_ != null ? other.player_.Clone() : null;
+      error_ = other.error_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -821,6 +808,18 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "error" field.</summary>
+    public const int ErrorFieldNumber = 3;
+    private string error_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Error {
+      get { return error_; }
+      set {
+        error_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -838,6 +837,7 @@ namespace Google.Protobuf.Protocol {
       }
       if (Success != other.Success) return false;
       if (!object.Equals(Player, other.Player)) return false;
+      if (Error != other.Error) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -847,6 +847,7 @@ namespace Google.Protobuf.Protocol {
       int hash = 1;
       if (Success != false) hash ^= Success.GetHashCode();
       if (player_ != null) hash ^= Player.GetHashCode();
+      if (Error.Length != 0) hash ^= Error.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -873,6 +874,10 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(18);
         output.WriteMessage(Player);
       }
+      if (Error.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(Error);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -891,6 +896,10 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(18);
         output.WriteMessage(Player);
       }
+      if (Error.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(Error);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -906,6 +915,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (player_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Player);
+      }
+      if (Error.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Error);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -927,6 +939,9 @@ namespace Google.Protobuf.Protocol {
           Player = new global::Google.Protobuf.Protocol.Player();
         }
         Player.MergeFrom(other.Player);
+      }
+      if (other.Error.Length != 0) {
+        Error = other.Error;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -954,6 +969,10 @@ namespace Google.Protobuf.Protocol {
             input.ReadMessage(Player);
             break;
           }
+          case 26: {
+            Error = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -978,6 +997,10 @@ namespace Google.Protobuf.Protocol {
               Player = new global::Google.Protobuf.Protocol.Player();
             }
             input.ReadMessage(Player);
+            break;
+          }
+          case 26: {
+            Error = input.ReadString();
             break;
           }
         }

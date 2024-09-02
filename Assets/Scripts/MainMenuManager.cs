@@ -58,28 +58,30 @@ public class MainMenuManager : MonoBehaviour
         if (id.Trim() == "" || pwd.Trim() == "")
             return;
 
+        if (id.Split(" ").Length > 1 || pwd.Split(" ").Length > 1)
+            return;
+
         if (!_networkManager.IsConnected())
             return;
 
         if (type == "login")
-            Login(id, pwd);
+            Login(id.Trim(), pwd.Trim());
         else if (type == "signup")
-            Signup(id, pwd);
+            Signup(id.Trim(), pwd.Trim());
     }
 
     void Login(string id, string pwd)
     {
-        Debug.Log("START Login");
-
         Account account = new Account()
         {
-            Id = ulong.Parse(id),
+            Id = 0,
+            Name = id,
+            //Password = pwd,
             Password = CreatedHashPwd(pwd),
         };
 
         C_LOGIN loginPkt = new C_LOGIN()
         {
-            Type = LoginType.Login,
             Account = account,
         };
         byte[] data = loginPkt.ToByteArray();
@@ -116,6 +118,7 @@ public class MainMenuManager : MonoBehaviour
             return builder.ToString();
         }
     }
+
     void UpdateConnectedTMPUI()
     {
         if (_networkManager.IsConnected())
