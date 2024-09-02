@@ -95,7 +95,8 @@ public class ClientManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("Failed to connect: " + e.Message);
+            //Debug.Log("Failed to connect: " + e.Message);
+            _menuManager.AlertPopup("서버 연결에 실패했습니다.");
             Task.Delay(5000).ContinueWith(_ => ConnectToServer(ipAddress, port, sceneType)); // 연결 실패 시 5초 후 재시도
         }
     }
@@ -120,38 +121,10 @@ public class ClientManager : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log("Heartbeat failed: " + e.Message);
+                //Debug.Log("Heartbeat failed: " + e.Message);
+                _menuManager.AlertPopup("서버와 연결이 끊어졌습니다.");
                 HandleDisconnect();
             }
-        }
-    }
-
-    public void ReceiveData()
-    {
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-
-        try
-        {
-            if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectRead))
-            {
-                bytesRead = _clientSocket.Receive(buffer);
-                if (bytesRead > 0)
-                {
-                    string receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    lastRecvTime = Time.time;
-                    ProcessMessage(receivedMessage);
-                }
-                else
-                {
-                    HandleDisconnect();
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Error receiving data: " + e.Message);
-            HandleDisconnect();
         }
     }
 
@@ -195,14 +168,15 @@ public class ClientManager : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogWarning("Received data is too short to contain a header.");
+                        _menuManager.AlertPopup("데이터 수신 실패.");
                     }
                 }
             }
         }
         catch (Exception e)
         {
-            Debug.LogError("Failed to receive data: " + e.Message);
+            _menuManager.AlertPopup("데이터 수신 실패.");
+            //Debug.LogError("Failed to receive data: " + e.Message);
             HandleDisconnect();
         }
     }
@@ -216,13 +190,34 @@ public class ClientManager : MonoBehaviour
                 Debug.Log($"Received chat message: PlayerId={chat.PlayerId}, Msg={chat.Msg}");
                 break;
 
-            // 다른 패킷 타입도 여기에 추가할 수 있습니다.
-            // case PacketId.PKT_S_LOGIN:
-            //     S_LOGIN login = S_LOGIN.Parser.ParseFrom(data);
-            //     Debug.Log($"Received login response: ...");
-            //     break;
+            case PacketId.PKT_S_LOGIN:
+                S_LOGIN login = S_LOGIN.Parser.ParseFrom(data);
+                if (login.Success)
+                {
+                    Debug.Log($"Login Success: {login.Player.Name}");
+                }
+                else
+                {
+                    _menuManager.AlertPopup(login.Error.ErrorMsg);
+                    Debug.Log($"Error Code: {login.Error.ErrorCode}");
+                }
+                break;
+
+            case PacketId.PKT_S_SIGNUP:
+                S_SIGNUP signup = S_SIGNUP.Parser.ParseFrom(data);
+                if (signup.Success)
+                {
+                    Debug.Log($"Signup Success");
+                }
+                else
+                {
+                    _menuManager.AlertPopup(signup.Error.ErrorMsg);
+                    Debug.Log($"Error Code: {signup.Error.ErrorCode}");
+                }
+                break;
 
             default:
+                _menuManager.AlertPopup("잘못된 정보");
                 Debug.Log($"Unknown packet id: {id}");
                 break;
         }
@@ -252,7 +247,7 @@ public class ClientManager : MonoBehaviour
 
         // 서버에 플레이어 생성 정보 전송 (옵션)
         string message = $"PLAYER_CREATED:{playerId}:{initialPosition.x}:{initialPosition.y}";
-        SendData(message);
+        //SendData(message);
     }
 
     public void HandleDisconnect()
@@ -266,22 +261,6 @@ public class ClientManager : MonoBehaviour
         }
     }
 
-    public void SendData(string message)
-    {
-        if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite))
-        {
-            byte[] data = Encoding.ASCII.GetBytes(message);
-            try
-            {
-                _clientSocket.Send(data);
-            }
-            catch (Exception e)
-            {
-                Debug.Log("Failed to send data: " + e.Message);
-                HandleDisconnect();
-            }
-        }
-    }
     public void SendPacket(PacketId packetId, byte[] protobufData)
     {
         if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite))
@@ -307,14 +286,12 @@ public class ClientManager : MonoBehaviour
                 Buffer.BlockCopy(header, 0, packet, 0, header.Length);
                 Buffer.BlockCopy(protobufData, 0, packet, header.Length, protobufData.Length);
 
-                // 디버깅 로그 출력
-                Debug.Log("Sending Packet Length: " + packet.Length);
-
                 _clientSocket.Send(packet);
             }
             catch (Exception e)
             {
-                Debug.Log("Failed to send data: " + e.Message);
+                _menuManager.AlertPopup("데이터 송신 실패");
+                //Debug.Log("Failed to send data: " + e.Message);
                 HandleDisconnect();
             }
         }

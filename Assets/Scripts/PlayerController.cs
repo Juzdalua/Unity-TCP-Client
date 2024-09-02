@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
         if (Vector2.Distance(_lastPosition, currentPosition) > 0.1f && _timeSinceLastSend >= _sendInterval)
         {
             string message = $"PlayerID:{currentPosition.x}:{currentPosition.y}";
-            _networkManager.SendData(message);
+            //_networkManager.SendData(message);
             _lastPosition = currentPosition;
             _timeSinceLastSend = 0f;
         }

@@ -11,17 +11,27 @@ using Google.Protobuf;
 
 public class MainMenuManager : MonoBehaviour
 {
+    [Header("User Info")]
     [SerializeField] private TMP_InputField idInput;
     [SerializeField] private TMP_InputField pwdInput;
     [SerializeField] private Button loginButton;
     [SerializeField] private Button signupButton;
+
+    [Header("Socket Info")]
     [SerializeField] private TextMeshProUGUI connectedTMP;
     [SerializeField] private List<Image> loadImages;
+
+    [Header("UI")]
+    [SerializeField] private GameObject alertPopup;
+    private float fadeDuration = 2.0f; // 페이드아웃 지속 시간
+    private bool isFadingOut = false;
+    private float fadeOutTimer = 0f;
 
     private ClientManager _networkManager;
 
     private void Start()
     {
+        SetAlertPopup();
         _networkManager = GetComponent<ClientManager>();
     }
 
@@ -30,6 +40,7 @@ public class MainMenuManager : MonoBehaviour
         TabInput();
         EnterInput();
         UpdateConnectedTMPUI();
+        FadeoutAlert();
 
         CheckSocket();
     }
@@ -90,7 +101,19 @@ public class MainMenuManager : MonoBehaviour
 
     void Signup(string id, string pwd)
     {
+        Account account = new Account()
+        {
+            Id = 0,
+            Name = id,
+            Password = CreatedHashPwd(pwd),
+        };
 
+        C_SIGNUP signupPkt = new C_SIGNUP()
+        {
+            Account = account,
+        };
+        byte[] data = signupPkt.ToByteArray();
+        _networkManager.SendPacket(PacketId.PKT_C_SIGNUP, data);
     }
 
     void CheckSocket()
@@ -134,26 +157,40 @@ public class MainMenuManager : MonoBehaviour
             loadImages[1].gameObject.SetActive(false);
         }
     }
-
-    byte[] protobufTestCreateAndSerialize()
+    public void AlertPopup(string msg)
     {
-        S_CHAT chat = new S_CHAT
+        alertPopup.SetActive(true);
+        alertPopup.GetComponent<CanvasGroup>().alpha = 1;
+        alertPopup.GetComponentInChildren<TextMeshProUGUI>().text = msg;
+
+        // 페이드아웃 시작
+        isFadingOut = true;
+        fadeOutTimer = 0f;
+    }
+
+    void FadeoutAlert()
+    {
+        if (isFadingOut)
         {
-            PlayerId = 1,
-            Msg = "Hi",
-        };
+            // 경과 시간 계산
+            fadeOutTimer += Time.deltaTime;
 
-        byte[] data = chat.ToByteArray();
-        Debug.Log($"Serialized Player Data: {BitConverter.ToString(data)}");
-        return data;
+            // alpha 값 계산 (0에서 fadeDuration까지 시간이 지나면 alpha는 0으로 감소)
+            alertPopup.GetComponent<CanvasGroup>().alpha = Mathf.Lerp(1, 0, fadeOutTimer / fadeDuration);
+
+            // 페이드아웃 완료 시
+            if (fadeOutTimer >= fadeDuration)
+            {
+                isFadingOut = false;
+                alertPopup.SetActive(false); // 팝업을 비활성화
+            }
+        }
     }
 
-    void protobufTestDeserializeAndUse(byte[] data)
+    void SetAlertPopup()
     {
-        S_CHAT chat = S_CHAT.Parser.ParseFrom(data);
-
-        Debug.Log($"Player ID: {chat.PlayerId}");
-        Debug.Log($"Message: {chat.Msg})");
+        alertPopup.SetActive(false);
+        alertPopup.GetComponent<CanvasGroup>().alpha = 0;
+        alertPopup.GetComponentInChildren<TextMeshProUGUI>().text = "";
     }
-
 }
