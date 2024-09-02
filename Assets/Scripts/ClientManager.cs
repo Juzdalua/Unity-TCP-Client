@@ -1,8 +1,11 @@
+using Google.Protobuf;
+using Google.Protobuf.Protocol;
 using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.XR;
 
 public enum SceneType
 {
@@ -12,6 +15,8 @@ public enum SceneType
 
 public enum PacketId
 {
+    PKT_C_TEST = 0001,
+    PKT_S_TEST = 0002,
     PKT_C_LOGIN = 1000,
     PKT_S_LOGIN = 1001,
     PKT_C_ENTER_GAME = 1002,
@@ -20,6 +25,13 @@ public enum PacketId
     PKT_S_CHAT = 1005,
 };
 
+public class PacketMessage
+{
+    public ushort Id { get; set; }
+    public IMessage Message { get; set; }
+}
+
+
 public class ClientManager : MonoBehaviour
 {
     [Header("Server Info")]
@@ -27,6 +39,7 @@ public class ClientManager : MonoBehaviour
     private bool _isConnected = false;
     public string serverIP = "127.0.0.1"; // 서버 IP 주소
     public int serverPort = 7777;        // 서버 포트 번호
+    private float lastSendTime = 0f;
     private float lastRecvTime = 0;
 
     [Header("Scene Type")]
@@ -51,7 +64,7 @@ public class ClientManager : MonoBehaviour
         else
         {
             Heartbeat();
-            ReceiveData();
+            ReceivePacket();
         }
     }
 
@@ -84,15 +97,19 @@ public class ClientManager : MonoBehaviour
     private void Heartbeat()
     {
         float term = 1f;
-        float lastSendTime = 0f;
-        string message = "ping";
 
         if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite) && (lastSendTime == 0f || lastRecvTime - lastSendTime > term))
         {
-            byte[] data = Encoding.ASCII.GetBytes(message);
+            //byte[] data = Encoding.ASCII.GetBytes(message);
+            C_CHAT pkt = new C_CHAT()
+            {
+                Msg = "Ping"
+            };
+
             try
             {
-                _clientSocket.Send(data);
+                //_clientSocket.Send(data);
+                SendPacket(PacketId.PKT_C_TEST, pkt.ToByteArray());
                 lastSendTime = Time.time;
             }
             catch (Exception e)
@@ -129,6 +146,79 @@ public class ClientManager : MonoBehaviour
         {
             Debug.Log("Error receiving data: " + e.Message);
             HandleDisconnect();
+        }
+    }
+
+    public void ReceivePacket()
+    {
+        try
+        {
+            while (_clientSocket.Available > 0)
+            {
+                byte[] buffer = new byte[4096]; // 적절한 버퍼 크기로 설정합니다.
+                int bytesRead = _clientSocket.Receive(buffer);
+
+                if (bytesRead > 0)
+                {
+                    // 수신된 데이터의 길이를 바이트 배열로 변환합니다.
+                    ArraySegment<byte> segment = new ArraySegment<byte>(buffer, 0, bytesRead);
+
+                    // 데이터가 충분한지 확인합니다 (헤더 4바이트 + 데이터)
+                    if (segment.Count >= 4)
+                    {
+                        // 1. 헤더 분석
+                        ushort size = BitConverter.ToUInt16(segment.Array, segment.Offset); // 리틀 엔디안
+                        ushort id = BitConverter.ToUInt16(segment.Array, segment.Offset + 2); // 리틀 엔디안
+
+                        // 2. 데이터 추출
+                        int dataSize = size - 4; // 데이터 크기 (헤더 크기 4바이트를 제외한 크기)
+                        if (segment.Count >= size)
+                        {
+                            byte[] data = new byte[dataSize];
+                            Buffer.BlockCopy(segment.Array, segment.Offset + 4, data, 0, dataSize);
+                            Debug.Log($"Received Packet ID: {id}, Size: {size}");
+
+                            // 데이터 처리
+                            ProcessReceivedPacket((PacketId)id, data);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Received incomplete packet.");
+                            // 처리되지 않은 데이터가 있는 경우 적절한 처리를 추가합니다.
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Received data is too short to contain a header.");
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to receive data: " + e.Message);
+            HandleDisconnect();
+        }
+    }
+
+    private void ProcessReceivedPacket(PacketId id, byte[] data)
+    {
+        switch (id)
+        {
+            case PacketId.PKT_S_TEST:
+                S_CHAT chat = S_CHAT.Parser.ParseFrom(data);
+                Debug.Log($"Received chat message: PlayerId={chat.PlayerId}, Msg={chat.Msg}");
+                break;
+
+            // 다른 패킷 타입도 여기에 추가할 수 있습니다.
+            // case PacketId.PKT_S_LOGIN:
+            //     S_LOGIN login = S_LOGIN.Parser.ParseFrom(data);
+            //     Debug.Log($"Received login response: ...");
+            //     break;
+
+            default:
+                Debug.Log($"Unknown packet id: {id}");
+                break;
         }
     }
 
@@ -189,27 +279,32 @@ public class ClientManager : MonoBehaviour
     public void SendPacket(PacketId packetId, byte[] protobufData)
     {
         Debug.Log("START SendPacket");
+
         if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite))
         {
             try
             {
-                // 1. 헤더 생성
+                // 1. 헤더 생성 (리틀 엔디안)
+                ushort id = (ushort)packetId;
+                ushort size = (ushort)(protobufData.Length + 4); // 데이터의 길이 + 헤더 길이
+
                 byte[] header = new byte[4];
 
-                // id (2바이트) - Big Endian 방식으로 변환
-                int id = (int)packetId;
-                header[0] = (byte)(id >> 8);
-                header[1] = (byte)(id & 0xFF);
+                // size (2바이트) - 리틀 엔디안 방식으로 변환
+                header[0] = (byte)(size & 0xFF); // 하위 바이트
+                header[1] = (byte)(size >> 8);   // 상위 바이트
 
-                // size (2바이트) - data의 길이 (Big Endian) + Header size(4byte)
-                int size = protobufData.Length + 4;
-                header[2] = (byte)(size >> 8);
-                header[3] = (byte)(size & 0xFF);
+                // id (2바이트) - 리틀 엔디안 방식으로 변환
+                header[2] = (byte)(id & 0xFF);   // 하위 바이트
+                header[3] = (byte)(id >> 8);     // 상위 바이트
 
                 // 2. 헤더와 데이터 결합
                 byte[] packet = new byte[header.Length + protobufData.Length];
                 Buffer.BlockCopy(header, 0, packet, 0, header.Length);
                 Buffer.BlockCopy(protobufData, 0, packet, header.Length, protobufData.Length);
+
+                // 디버깅 로그 출력
+                Debug.Log("Sending Packet Length: " + packet.Length);
 
                 _clientSocket.Send(packet);
                 Debug.Log("Success SendPacket");
@@ -221,6 +316,7 @@ public class ClientManager : MonoBehaviour
             }
         }
     }
+
 
     private void OnApplicationQuit()
     {
