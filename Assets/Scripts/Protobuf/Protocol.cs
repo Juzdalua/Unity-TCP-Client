@@ -27,23 +27,25 @@ namespace Google.Protobuf.Protocol {
             "Cg5Qcm90b2NvbC5wcm90bxIIUHJvdG9jb2waH2dvb2dsZS9wcm90b2J1Zi90",
             "aW1lc3RhbXAucHJvdG8iLwoIRXJyb3JPYmoSEQoJZXJyb3JDb2RlGAEgASgD",
             "EhAKCGVycm9yTXNnGAIgASgJIjUKB0FjY291bnQSCgoCaWQYASABKAQSDAoE",
-            "bmFtZRgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSIiCgZQbGF5ZXISCgoCaWQY",
-            "ASABKAQSDAoEbmFtZRgCIAEoCSIuCghDX1NJR05VUBIiCgdhY2NvdW50GAEg",
-            "ASgLMhEuUHJvdG9jb2wuQWNjb3VudCI+CghTX1NJR05VUBIPCgdzdWNjZXNz",
-            "GAEgASgIEiEKBWVycm9yGAIgASgLMhIuUHJvdG9jb2wuRXJyb3JPYmoiLQoH",
-            "Q19MT0dJThIiCgdhY2NvdW50GAEgASgLMhEuUHJvdG9jb2wuQWNjb3VudCJf",
-            "CgdTX0xPR0lOEg8KB3N1Y2Nlc3MYASABKAgSIAoGcGxheWVyGAIgASgLMhAu",
-            "UHJvdG9jb2wuUGxheWVyEiEKBWVycm9yGAMgASgLMhIuUHJvdG9jb2wuRXJy",
-            "b3JPYmoiIAoMQ19FTlRFUl9HQU1FEhAKCHBsYXllcklkGAEgASgEIh8KDFNf",
-            "RU5URVJfR0FNRRIPCgdzdWNjZXNzGAEgASgIIhUKBkNfQ0hBVBILCgNtc2cY",
-            "ASABKAkiJwoGU19DSEFUEhAKCHBsYXllcklkGAEgASgEEgsKA21zZxgCIAEo",
-            "CUIbqgIYR29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZwcm90bzM="));
+            "bmFtZRgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSJlCgZQbGF5ZXISCgoCaWQY",
+            "ASABKAQSEQoJYWNjb3VudElkGAIgASgEEgwKBHBvc1gYAyABKAkSDAoEcG9z",
+            "WRgEIAEoCRINCgVtYXhIUBgFIAEoAhIRCgljdXJyZW50SFAYBiABKAIiLgoI",
+            "Q19TSUdOVVASIgoHYWNjb3VudBgBIAEoCzIRLlByb3RvY29sLkFjY291bnQi",
+            "PgoIU19TSUdOVVASDwoHc3VjY2VzcxgBIAEoCBIhCgVlcnJvchgCIAEoCzIS",
+            "LlByb3RvY29sLkVycm9yT2JqIi0KB0NfTE9HSU4SIgoHYWNjb3VudBgBIAEo",
+            "CzIRLlByb3RvY29sLkFjY291bnQiXwoHU19MT0dJThIPCgdzdWNjZXNzGAEg",
+            "ASgIEiAKBnBsYXllchgCIAEoCzIQLlByb3RvY29sLlBsYXllchIhCgVlcnJv",
+            "chgDIAEoCzISLlByb3RvY29sLkVycm9yT2JqIiAKDENfRU5URVJfR0FNRRIQ",
+            "CghwbGF5ZXJJZBgBIAEoBCIfCgxTX0VOVEVSX0dBTUUSDwoHc3VjY2VzcxgB",
+            "IAEoCCIVCgZDX0NIQVQSCwoDbXNnGAEgASgJIicKBlNfQ0hBVBIQCghwbGF5",
+            "ZXJJZBgBIAEoBBILCgNtc2cYAiABKAlCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Q",
+            "cm90b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.ErrorObj), global::Google.Protobuf.Protocol.ErrorObj.Parser, new[]{ "ErrorCode", "ErrorMsg" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Account), global::Google.Protobuf.Protocol.Account.Parser, new[]{ "Id", "Name", "Password" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Player), global::Google.Protobuf.Protocol.Player.Parser, new[]{ "Id", "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Player), global::Google.Protobuf.Protocol.Player.Parser, new[]{ "Id", "AccountId", "PosX", "PosY", "MaxHP", "CurrentHP" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_SIGNUP), global::Google.Protobuf.Protocol.C_SIGNUP.Parser, new[]{ "Account" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_SIGNUP), global::Google.Protobuf.Protocol.S_SIGNUP.Parser, new[]{ "Success", "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_LOGIN), global::Google.Protobuf.Protocol.C_LOGIN.Parser, new[]{ "Account" }, null, null, null, null),
@@ -582,7 +584,11 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public Player(Player other) : this() {
       id_ = other.id_;
-      name_ = other.name_;
+      accountId_ = other.accountId_;
+      posX_ = other.posX_;
+      posY_ = other.posY_;
+      maxHP_ = other.maxHP_;
+      currentHP_ = other.currentHP_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -604,15 +610,63 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
-    /// <summary>Field number for the "name" field.</summary>
-    public const int NameFieldNumber = 2;
-    private string name_ = "";
+    /// <summary>Field number for the "accountId" field.</summary>
+    public const int AccountIdFieldNumber = 2;
+    private ulong accountId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Name {
-      get { return name_; }
+    public ulong AccountId {
+      get { return accountId_; }
       set {
-        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        accountId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "posX" field.</summary>
+    public const int PosXFieldNumber = 3;
+    private string posX_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string PosX {
+      get { return posX_; }
+      set {
+        posX_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "posY" field.</summary>
+    public const int PosYFieldNumber = 4;
+    private string posY_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string PosY {
+      get { return posY_; }
+      set {
+        posY_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "maxHP" field.</summary>
+    public const int MaxHPFieldNumber = 5;
+    private float maxHP_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float MaxHP {
+      get { return maxHP_; }
+      set {
+        maxHP_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "currentHP" field.</summary>
+    public const int CurrentHPFieldNumber = 6;
+    private float currentHP_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float CurrentHP {
+      get { return currentHP_; }
+      set {
+        currentHP_ = value;
       }
     }
 
@@ -632,7 +686,11 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (Id != other.Id) return false;
-      if (Name != other.Name) return false;
+      if (AccountId != other.AccountId) return false;
+      if (PosX != other.PosX) return false;
+      if (PosY != other.PosY) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(MaxHP, other.MaxHP)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(CurrentHP, other.CurrentHP)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -641,7 +699,11 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (Id != 0UL) hash ^= Id.GetHashCode();
-      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (AccountId != 0UL) hash ^= AccountId.GetHashCode();
+      if (PosX.Length != 0) hash ^= PosX.GetHashCode();
+      if (PosY.Length != 0) hash ^= PosY.GetHashCode();
+      if (MaxHP != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(MaxHP);
+      if (CurrentHP != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(CurrentHP);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -664,9 +726,25 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteUInt64(Id);
       }
-      if (Name.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Name);
+      if (AccountId != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(AccountId);
+      }
+      if (PosX.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(PosX);
+      }
+      if (PosY.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteString(PosY);
+      }
+      if (MaxHP != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(MaxHP);
+      }
+      if (CurrentHP != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(CurrentHP);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -682,9 +760,25 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteUInt64(Id);
       }
-      if (Name.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Name);
+      if (AccountId != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(AccountId);
+      }
+      if (PosX.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(PosX);
+      }
+      if (PosY.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteString(PosY);
+      }
+      if (MaxHP != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(MaxHP);
+      }
+      if (CurrentHP != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(CurrentHP);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -699,8 +793,20 @@ namespace Google.Protobuf.Protocol {
       if (Id != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Id);
       }
-      if (Name.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      if (AccountId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(AccountId);
+      }
+      if (PosX.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(PosX);
+      }
+      if (PosY.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(PosY);
+      }
+      if (MaxHP != 0F) {
+        size += 1 + 4;
+      }
+      if (CurrentHP != 0F) {
+        size += 1 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -717,8 +823,20 @@ namespace Google.Protobuf.Protocol {
       if (other.Id != 0UL) {
         Id = other.Id;
       }
-      if (other.Name.Length != 0) {
-        Name = other.Name;
+      if (other.AccountId != 0UL) {
+        AccountId = other.AccountId;
+      }
+      if (other.PosX.Length != 0) {
+        PosX = other.PosX;
+      }
+      if (other.PosY.Length != 0) {
+        PosY = other.PosY;
+      }
+      if (other.MaxHP != 0F) {
+        MaxHP = other.MaxHP;
+      }
+      if (other.CurrentHP != 0F) {
+        CurrentHP = other.CurrentHP;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -739,8 +857,24 @@ namespace Google.Protobuf.Protocol {
             Id = input.ReadUInt64();
             break;
           }
-          case 18: {
-            Name = input.ReadString();
+          case 16: {
+            AccountId = input.ReadUInt64();
+            break;
+          }
+          case 26: {
+            PosX = input.ReadString();
+            break;
+          }
+          case 34: {
+            PosY = input.ReadString();
+            break;
+          }
+          case 45: {
+            MaxHP = input.ReadFloat();
+            break;
+          }
+          case 53: {
+            CurrentHP = input.ReadFloat();
             break;
           }
         }
@@ -762,8 +896,24 @@ namespace Google.Protobuf.Protocol {
             Id = input.ReadUInt64();
             break;
           }
-          case 18: {
-            Name = input.ReadString();
+          case 16: {
+            AccountId = input.ReadUInt64();
+            break;
+          }
+          case 26: {
+            PosX = input.ReadString();
+            break;
+          }
+          case 34: {
+            PosY = input.ReadString();
+            break;
+          }
+          case 45: {
+            MaxHP = input.ReadFloat();
+            break;
+          }
+          case 53: {
+            CurrentHP = input.ReadFloat();
             break;
           }
         }
