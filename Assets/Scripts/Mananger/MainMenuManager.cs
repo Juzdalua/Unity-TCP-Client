@@ -52,7 +52,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
 
     void EnterInput()
     {
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.Return))
             OnClickButton("login");
     }
     public void OnClickButton(string type)
