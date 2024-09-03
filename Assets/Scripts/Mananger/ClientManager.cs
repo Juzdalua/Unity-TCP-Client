@@ -235,9 +235,7 @@ public class ClientManager : Singleton<ClientManager>
                 S_ENTER_GAME enter = S_ENTER_GAME.Parser.ParseFrom(data);
                 if (enter.Success)
                 {
-                    // TODO 위치 동기화
-
-                    // TODO 다른 플레이어 동기화
+                    PlayerManager.Instance.AddOrUpdatePlayer(enter);
                 }
                 else
                 {
@@ -263,20 +261,6 @@ public class ClientManager : Singleton<ClientManager>
                 AlertManager.Instance.AlertPopup("잘못된 정보");
                 Debug.Log($"Unknown packet id: {id}");
                 break;
-        }
-    }
-
-    private void ProcessMessage(string message)
-    {
-        // 메시지 형식: CREATE_PLAYER:playerId:x:y
-        string[] parts = message.Split(':');
-        if (parts.Length == 4 && parts[0] == "CREATE_PLAYER")
-        {
-            string playerId = parts[1];
-            float x = float.Parse(parts[2]);
-            float y = float.Parse(parts[3]);
-
-            _playerManager.AddOrUpdatePlayer(playerId, new Vector2(x, y));
         }
     }
 

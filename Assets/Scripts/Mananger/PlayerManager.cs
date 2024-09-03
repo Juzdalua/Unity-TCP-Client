@@ -1,57 +1,70 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Google.Protobuf.Protocol;
 
 public class PlayerManager : Singleton<PlayerManager>
 {
-    // 다양한 캐릭터 프리팹
     //public List<GameObject> playerPrefabs; 
-    public GameObject playerPrefab; 
+    public GameObject playerPrefab;
 
-    private Dictionary<string, GameObject> _players = new Dictionary<string, GameObject>();
+    private Dictionary<ulong, GameObject> _players = new Dictionary<ulong, GameObject>();
 
     [SerializeField] ulong _playerId = 0;
     [SerializeField] string _playerName = "";
 
-    // 플레이어 추가 또는 업데이트
-    public void AddOrUpdatePlayer(string playerId, Vector2 position)
+    public void CreatePlayer(S_LOGIN pkt)
     {
-        if (!_players.ContainsKey(playerId))
-        {
-            // 프리팹 선택 (예시로 플레이어 ID의 해시 값을 사용)
-            //GameObject prefab = SelectPrefabByPlayerId(playerId);
-            GameObject prefab = playerPrefab;
+        ulong playerId = pkt.Player.Id;
 
-            // 새로운 플레이어 생성
-            GameObject player = Instantiate(prefab, position, Quaternion.identity);
-            player.name = playerId;
-            _players[playerId] = player;
-        }
-        else
+        //TODO Player HP Set
+
+        GameObject prefab = playerPrefab;
+        GameObject player = Instantiate(prefab, new Vector2(pkt.Player.PosX, pkt.Player.PosY), Quaternion.identity);
+        player.name = pkt.Player.Id.ToString();
+        _players[pkt.Player.Id] = player;
+
+        GameManager.Instance.EnterGame(playerId);
+    }
+
+    // 플레이어 추가 또는 업데이트
+    public void AddOrUpdatePlayer(S_ENTER_GAME pkt)
+    {
+        for (int i = 0; i < pkt.Players.Count; i++)
         {
-            // 기존 플레이어의 위치 업데이트
-            _players[playerId].transform.position = position;
+            if (!_players.ContainsKey(pkt.Players[i].Id))
+            {
+                GameObject prefab = playerPrefab;
+
+                // 새로운 플레이어 생성
+                GameObject player = Instantiate(prefab, new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY), Quaternion.identity);
+                player.name = pkt.Players[i].Id.ToString();
+                _players[pkt.Players[i].Id] = player;
+
+                if (pkt.ToPlayer == ToPlayer.Owner)
+                {
+                    SetPlayerId(pkt.Players[0].Id);
+                    player.GetComponent<PlayerController>().SetPlayerId(pkt.Players[0].Id);
+                    player.GetComponent<PlayerController>().SetPlayerName(GetPlayerName());
+                }
+            }
+            else
+            {
+                // 기존 플레이어의 위치 업데이트
+                _players[pkt.Players[i].Id].transform.position = new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY);
+            }
         }
     }
 
     // 플레이어 제거 (필요시)
-    public void RemovePlayer(string playerId)
+    public void RemovePlayer(ulong playerId)
     {
         if (_players.ContainsKey(playerId))
         {
             Destroy(_players[playerId]);
             _players.Remove(playerId);
+            // TODO Room Leave
         }
     }
-
-    // 플레이어 ID에 따라 적절한 프리팹을 선택
-    //private GameObject SelectPrefabByPlayerId(string playerId)
-    //{
-    //    // 예: 플레이어 ID의 해시 값을 사용하여 인덱스를 생성
-    //    int index = Mathf.Abs(playerId.GetHashCode()) % playerPrefabs.Count;
-
-    //    // 유효한 프리팹 인덱스 반환
-    //    return playerPrefabs[index];
-    //}
 
     public void SetPlayerId(ulong playerId)
     {

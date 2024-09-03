@@ -1,6 +1,9 @@
 using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private ulong playerId;
+    [SerializeField] private string playerName;
+
     private ClientManager _networkManager;
     private Player _player;
     private PlayerManager _playerManager;
@@ -39,7 +42,27 @@ public class PlayerController : MonoBehaviour
             float x = float.Parse(parts[1]);
             float y = float.Parse(parts[2]);
 
-            _playerManager.AddOrUpdatePlayer(playerId, new Vector2(x, y));
+            //_playerManager.AddOrUpdatePlayer(playerId, new Vector2(x, y));
         }
+    }
+
+    public void SetPlayerId(ulong _playerId)
+    {
+        playerId = _playerId;
+    }
+
+    public void SetPlayerName(string _playerName)
+    {
+        playerName = _playerName;
+    }
+
+    public ulong GetPlayerId()
+    {
+        return playerId;
+    }
+
+    public string GetPlayerName()
+    {
+        return playerName;
     }
 }

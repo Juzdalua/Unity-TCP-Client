@@ -19,23 +19,10 @@ public class GameManager : Singleton<GameManager>
     {
 
         isStart = true;
-        CreatePlayer();
-    }
-    private void CreatePlayer()
-    {
-        ulong playerId = loginPkt.Player.Id;
-        Vector2 initialPosition = new Vector2(loginPkt.Player.PosX, loginPkt.Player.PosY);
-
-        //TODO Player HP Set
-
-        PlayerManager.Instance.AddOrUpdatePlayer(playerId.ToString(), initialPosition);
-
-        // 서버에 플레이어 생성 정보 전송 (옵션)
-        string message = $"PLAYER_CREATED:{playerId}:{initialPosition.x}:{initialPosition.y}";
-        EnterGame(playerId);
+        PlayerManager.Instance.CreatePlayer(loginPkt);
     }
 
-    void EnterGame(ulong playerId)
+    public void EnterGame(ulong playerId)
     {
         C_ENTER_GAME enterPkt = new C_ENTER_GAME()
         {
@@ -53,6 +40,10 @@ public class GameManager : Singleton<GameManager>
             default:
             case ChatType.Normal:
                 _type = Google.Protobuf.Protocol.ChatType.Normal;
+                break;
+
+            case ChatType.Party:
+                _type = Google.Protobuf.Protocol.ChatType.Party;
                 break;
 
             case ChatType.Guild:
@@ -82,6 +73,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ProcessChatFromServer(S_CHAT chatPkt)
     {
+        Debug.Log($"{chatPkt.Type} / {chatPkt.PlayerName} / {chatPkt.Msg}");
         switch (chatPkt.Type)
         {
             default:

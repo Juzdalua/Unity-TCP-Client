@@ -158,8 +158,9 @@ public class ChattingManager : Singleton<ChattingManager>
         GameObject clone = Instantiate(textChatPrefab, parentContent);
         ChatCell cell = clone.GetComponent<ChatCell>();
 
-        cell.Setup(type, color, $"{playerId} : {_inputField.text}");
+        cell.Setup(type, color, text);
         _inputField.text = "";
+        _inputField.DeactivateInputField();
 
         chatList.Add(cell);
 
@@ -181,7 +182,7 @@ public class ChattingManager : Singleton<ChattingManager>
     {
         currentInputType = (int)currentInputType < (int)ChatType.Count - 3 ? currentInputType + 1 : 0;
 
-        // TOdo --> button text change
+        // button text change
         chatTypeButton.GetComponentInChildren<TextMeshProUGUI>().text = currentInputType.ToString();
 
         currentTextColor = ChatTypeToColor(currentInputType);

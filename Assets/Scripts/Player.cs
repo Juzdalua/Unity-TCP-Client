@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        //Debug.Log($"PC: {GetComponent<PlayerController>().GetPlayerId()} / PM: {PlayerManager.Instance.GetPlayerId()}");
+
         _rb = GetComponent<Rigidbody2D>();
         _sprite = GetComponent<SpriteRenderer>();
     }
@@ -20,7 +22,11 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        ApplyMovement();
+        if (GetComponent<PlayerController>().GetPlayerId() == PlayerManager.Instance.GetPlayerId())
+            ApplyMovement();
+
+        //if (_inputVec.magnitude == 0)
+        //    _rb.velocity = Vector2.zero;
     }
 
     private void GetInput()
@@ -35,7 +41,7 @@ public class Player : MonoBehaviour
         _rb.MovePosition(_rb.position + movement);
         _currentPosition = _rb.position;
 
-        if(_inputVec.x != 0)
+        if (_inputVec.x != 0)
         {
             _sprite.flipX = _inputVec.x < 0;
         }

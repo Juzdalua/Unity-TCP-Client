@@ -21,7 +21,6 @@ public class AlertManager : Singleton<AlertManager>
         isFadingOut = true;
         fadeOutTimer = 0f;
     }
-
     public void FadeoutAlert()
     {
         if (isFadingOut)
