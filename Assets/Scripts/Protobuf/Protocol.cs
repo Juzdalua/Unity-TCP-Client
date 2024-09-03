@@ -28,8 +28,8 @@ namespace Google.Protobuf.Protocol {
             "aW1lc3RhbXAucHJvdG8iLwoIRXJyb3JPYmoSEQoJZXJyb3JDb2RlGAEgASgD",
             "EhAKCGVycm9yTXNnGAIgASgJIjUKB0FjY291bnQSCgoCaWQYASABKAQSDAoE",
             "bmFtZRgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSJlCgZQbGF5ZXISCgoCaWQY",
-            "ASABKAQSEQoJYWNjb3VudElkGAIgASgEEgwKBHBvc1gYAyABKAkSDAoEcG9z",
-            "WRgEIAEoCRINCgVtYXhIUBgFIAEoAhIRCgljdXJyZW50SFAYBiABKAIiLgoI",
+            "ASABKAQSEQoJYWNjb3VudElkGAIgASgEEgwKBHBvc1gYAyABKAISDAoEcG9z",
+            "WRgEIAEoAhINCgVtYXhIUBgFIAEoAhIRCgljdXJyZW50SFAYBiABKAIiLgoI",
             "Q19TSUdOVVASIgoHYWNjb3VudBgBIAEoCzIRLlByb3RvY29sLkFjY291bnQi",
             "PgoIU19TSUdOVVASDwoHc3VjY2VzcxgBIAEoCBIhCgVlcnJvchgCIAEoCzIS",
             "LlByb3RvY29sLkVycm9yT2JqIi0KB0NfTE9HSU4SIgoHYWNjb3VudBgBIAEo",
@@ -624,25 +624,25 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "posX" field.</summary>
     public const int PosXFieldNumber = 3;
-    private string posX_ = "";
+    private float posX_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string PosX {
+    public float PosX {
       get { return posX_; }
       set {
-        posX_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        posX_ = value;
       }
     }
 
     /// <summary>Field number for the "posY" field.</summary>
     public const int PosYFieldNumber = 4;
-    private string posY_ = "";
+    private float posY_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string PosY {
+    public float PosY {
       get { return posY_; }
       set {
-        posY_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        posY_ = value;
       }
     }
 
@@ -687,8 +687,8 @@ namespace Google.Protobuf.Protocol {
       }
       if (Id != other.Id) return false;
       if (AccountId != other.AccountId) return false;
-      if (PosX != other.PosX) return false;
-      if (PosY != other.PosY) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosX, other.PosX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosY, other.PosY)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(MaxHP, other.MaxHP)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(CurrentHP, other.CurrentHP)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -700,8 +700,8 @@ namespace Google.Protobuf.Protocol {
       int hash = 1;
       if (Id != 0UL) hash ^= Id.GetHashCode();
       if (AccountId != 0UL) hash ^= AccountId.GetHashCode();
-      if (PosX.Length != 0) hash ^= PosX.GetHashCode();
-      if (PosY.Length != 0) hash ^= PosY.GetHashCode();
+      if (PosX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosX);
+      if (PosY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosY);
       if (MaxHP != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(MaxHP);
       if (CurrentHP != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(CurrentHP);
       if (_unknownFields != null) {
@@ -730,13 +730,13 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(16);
         output.WriteUInt64(AccountId);
       }
-      if (PosX.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteString(PosX);
+      if (PosX != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(PosX);
       }
-      if (PosY.Length != 0) {
-        output.WriteRawTag(34);
-        output.WriteString(PosY);
+      if (PosY != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(PosY);
       }
       if (MaxHP != 0F) {
         output.WriteRawTag(45);
@@ -764,13 +764,13 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(16);
         output.WriteUInt64(AccountId);
       }
-      if (PosX.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteString(PosX);
+      if (PosX != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(PosX);
       }
-      if (PosY.Length != 0) {
-        output.WriteRawTag(34);
-        output.WriteString(PosY);
+      if (PosY != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(PosY);
       }
       if (MaxHP != 0F) {
         output.WriteRawTag(45);
@@ -796,11 +796,11 @@ namespace Google.Protobuf.Protocol {
       if (AccountId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(AccountId);
       }
-      if (PosX.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(PosX);
+      if (PosX != 0F) {
+        size += 1 + 4;
       }
-      if (PosY.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(PosY);
+      if (PosY != 0F) {
+        size += 1 + 4;
       }
       if (MaxHP != 0F) {
         size += 1 + 4;
@@ -826,10 +826,10 @@ namespace Google.Protobuf.Protocol {
       if (other.AccountId != 0UL) {
         AccountId = other.AccountId;
       }
-      if (other.PosX.Length != 0) {
+      if (other.PosX != 0F) {
         PosX = other.PosX;
       }
-      if (other.PosY.Length != 0) {
+      if (other.PosY != 0F) {
         PosY = other.PosY;
       }
       if (other.MaxHP != 0F) {
@@ -861,12 +861,12 @@ namespace Google.Protobuf.Protocol {
             AccountId = input.ReadUInt64();
             break;
           }
-          case 26: {
-            PosX = input.ReadString();
+          case 29: {
+            PosX = input.ReadFloat();
             break;
           }
-          case 34: {
-            PosY = input.ReadString();
+          case 37: {
+            PosY = input.ReadFloat();
             break;
           }
           case 45: {
@@ -900,12 +900,12 @@ namespace Google.Protobuf.Protocol {
             AccountId = input.ReadUInt64();
             break;
           }
-          case 26: {
-            PosX = input.ReadString();
+          case 29: {
+            PosX = input.ReadFloat();
             break;
           }
-          case 34: {
-            PosY = input.ReadString();
+          case 37: {
+            PosY = input.ReadFloat();
             break;
           }
           case 45: {

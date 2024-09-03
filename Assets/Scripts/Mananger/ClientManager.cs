@@ -50,16 +50,24 @@ public class ClientManager : Singleton<ClientManager>
     private float lastRecvTime = 0;
 
     [Header("Scene Type")]
-    [SerializeField] SceneType _sceneType;
-    private MainMenuManager _menuManager;
-    private PlayerManager _playerManager;
+    [SerializeField] private SceneType _sceneType;
+    [SerializeField] private MainMenuManager _menuManager;
+    [SerializeField] private PlayerManager _playerManager;
 
     void Start()
     {
+        _menuManager = MainMenuManager.Instance.GetComponent<MainMenuManager>();
+        _playerManager = PlayerManager.Instance.GetComponent<PlayerManager>();
+
+
         if (_sceneType == SceneType.Menu)
-            _menuManager = GetComponent<MainMenuManager>();
+        {
+
+        }
         else if (_sceneType == SceneType.Game)
-            _playerManager = GetComponent<PlayerManager>();
+        {
+
+        }
     }
 
     public void CheckSocket(SceneType sceneType)
@@ -89,8 +97,6 @@ public class ClientManager : Singleton<ClientManager>
             }
             else if (sceneType == SceneType.Game)
             {
-                // 서버 연결 후 플레이어 캐릭터 생성
-                CreatePlayer();
             }
 
         }
@@ -176,6 +182,7 @@ public class ClientManager : Singleton<ClientManager>
         }
         catch (Exception e)
         {
+            Debug.Log(_menuManager);
             _menuManager.AlertPopup("데이터 수신 실패.");
             //Debug.LogError("Failed to receive data: " + e.Message);
             HandleDisconnect();
@@ -196,8 +203,13 @@ public class ClientManager : Singleton<ClientManager>
                 if (login.Success)
                 {
                     Debug.Log($"Login Success: {login.Player.Id}");
-                    // TODO Scene 전환
+                    
+                    //Scene 전환
+                    SetSceneType(SceneType.Game);
+                    MainMenuManager.Instance.ActiveMenu();
                     SceneManager.LoadScene("01.MainScene");
+                    //GameManager.Instance.loginPkt = login;
+                    GameManager.loginPkt = login;
                 }
                 else
                 {
@@ -238,19 +250,6 @@ public class ClientManager : Singleton<ClientManager>
 
             _playerManager.AddOrUpdatePlayer(playerId, new Vector2(x, y));
         }
-    }
-
-    private void CreatePlayer()
-    {
-        // 예시로 고유 ID 및 초기 위치 설정
-        string playerId = Guid.NewGuid().ToString(); // 고유한 플레이어 ID 생성
-        Vector2 initialPosition = Vector2.zero; // 초기 위치 설정
-
-        _playerManager.AddOrUpdatePlayer(playerId, initialPosition);
-
-        // 서버에 플레이어 생성 정보 전송 (옵션)
-        string message = $"PLAYER_CREATED:{playerId}:{initialPosition.x}:{initialPosition.y}";
-        //SendData(message);
     }
 
     public void HandleDisconnect()
@@ -300,7 +299,6 @@ public class ClientManager : Singleton<ClientManager>
         }
     }
 
-
     private void OnApplicationQuit()
     {
         // 애플리케이션 종료 시 연결 종료 처리
@@ -310,5 +308,15 @@ public class ClientManager : Singleton<ClientManager>
     public bool IsConnected()
     {
         return _isConnected;
+    }
+
+    public SceneType GetSceneType()
+    {
+        return _sceneType;
+    }
+
+    public void SetSceneType(SceneType type)
+    {
+        _sceneType = type;
     }
 }

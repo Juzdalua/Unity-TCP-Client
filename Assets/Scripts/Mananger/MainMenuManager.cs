@@ -10,7 +10,7 @@ using System;
 using Google.Protobuf;
 using Unity.VisualScripting;
 
-public class MainMenuManager : MonoBehaviour
+public class MainMenuManager : Singleton<MainMenuManager>
 {
     [Header("User Info")]
     [SerializeField] private TMP_InputField idInput;
@@ -19,6 +19,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button signupButton;
 
     [Header("Socket Info")]
+    [SerializeField] private ClientManager _networkManager;
     [SerializeField] private TextMeshProUGUI connectedTMP;
     [SerializeField] private List<Image> loadImages;
 
@@ -28,12 +29,10 @@ public class MainMenuManager : MonoBehaviour
     private bool isFadingOut = false;
     private float fadeOutTimer = 0f;
 
-    private ClientManager _networkManager;
-
     private void Start()
     {
         SetAlertPopup();
-        _networkManager = GetComponent<ClientManager>();
+        _networkManager = ClientManager.Instance.GetComponent<ClientManager>();
     }
 
     private void Update()
@@ -187,11 +186,22 @@ public class MainMenuManager : MonoBehaviour
             }
         }
     }
-
     void SetAlertPopup()
     {
         alertPopup.SetActive(false);
         alertPopup.GetComponent<CanvasGroup>().alpha = 0;
         alertPopup.GetComponentInChildren<TextMeshProUGUI>().text = "";
+    }
+
+    public void ActiveMenu()
+    {
+        if(ClientManager.Instance.GetSceneType() == SceneType.Menu)
+        {
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

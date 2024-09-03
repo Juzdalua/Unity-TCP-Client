@@ -1,12 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : Singleton<PlayerManager>
 {
     // 다양한 캐릭터 프리팹
     public List<GameObject> playerPrefabs; // 유니티 에디터에서 할당 (프리팹 목록)
 
     private Dictionary<string, GameObject> _players = new Dictionary<string, GameObject>();
+
+    [SerializeField] int _playerId = 0;
 
     // 플레이어 추가 또는 업데이트
     public void AddOrUpdatePlayer(string playerId, Vector2 position)
@@ -46,5 +48,15 @@ public class PlayerManager : MonoBehaviour
 
         // 유효한 프리팹 인덱스 반환
         return playerPrefabs[index];
+    }
+
+    void SetPlayerId(int playerId)
+    {
+        _playerId = playerId;
+    }
+
+    int GetPlayerId()
+    {
+        return _playerId;
     }
 }

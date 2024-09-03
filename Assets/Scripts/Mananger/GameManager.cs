@@ -1,27 +1,49 @@
+using Google.Protobuf;
+using Google.Protobuf.Protocol;
 using UnityEngine;
-public class GameManager : MonoBehaviour
+using UnityEngine.SceneManagement;
+public class GameManager : Singleton<GameManager>
 {
-    private ClientManager _networkManager;
+    private bool isStart = false;
+    public static S_LOGIN loginPkt;
 
-    void Start()
-    {
-        _networkManager = GetComponent<ClientManager>();
-
-        if (_networkManager != null)
+    private void Update()
+    {    
+        if(SceneManager.GetActiveScene().name == "01.MainScene" && !isStart && loginPkt != null)
         {
-            _networkManager.ConnectToServer(_networkManager.serverIP, _networkManager.serverPort, SceneType.Game);
-        }
-        else
-        {
-            Debug.Log("ClientManager not found in the scene.");
+            ProcessLogin();
         }
     }
 
-    private void Update()
+    public void ProcessLogin()
     {
-        if(_networkManager != null)
+
+        isStart = true;
+        CreatePlayer();
+    }
+    private void CreatePlayer()
+    {
+        ulong playerId = loginPkt.Player.Id;
+        Vector2 initialPosition = new Vector2(loginPkt.Player.PosX, loginPkt.Player.PosY);
+
+        //TODO Player HP Set
+
+        Debug.Log(SceneManager.GetActiveScene().name);
+        PlayerManager.Instance.AddOrUpdatePlayer(playerId.ToString(), initialPosition);
+
+        // 서버에 플레이어 생성 정보 전송 (옵션)
+        string message = $"PLAYER_CREATED:{playerId}:{initialPosition.x}:{initialPosition.y}";
+        EnterGame(playerId);
+    }
+
+    void EnterGame(ulong playerId)
+    {
+        C_ENTER_GAME enterPkt = new C_ENTER_GAME()
         {
-            _networkManager.CheckSocket(SceneType.Game);
-        }
+            PlayerId = playerId
+        };
+
+        byte[] data = enterPkt.ToByteArray();
+        ClientManager.Instance.SendPacket(PacketId.PKT_C_ENTER_GAME, data);
     }
 }
