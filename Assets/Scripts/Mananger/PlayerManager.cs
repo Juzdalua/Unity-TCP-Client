@@ -1,9 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Google.Protobuf.Protocol;
+using System.Collections;
 
 public class PlayerManager : Singleton<PlayerManager>
 {
+    private float _speed = 5f;
     //public List<GameObject> playerPrefabs; 
     public GameObject playerPrefab;
 
@@ -23,7 +25,7 @@ public class PlayerManager : Singleton<PlayerManager>
         player.name = pkt.Player.Id.ToString();
         _players[pkt.Player.Id] = player;
 
-        GameManager.Instance.EnterGame(playerId);
+        ClientPacketHandler.Instance.EnterGame(playerId);
     }
 
     // 플레이어 추가 또는 업데이트
@@ -50,9 +52,34 @@ public class PlayerManager : Singleton<PlayerManager>
             else
             {
                 // 기존 플레이어의 위치 업데이트
-                _players[pkt.Players[i].Id].transform.position = new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY);
+                //_players[pkt.Players[i].Id].transform.position = new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY);
+                // 기존 플레이어의 위치 업데이트 (부드럽게 이동)
+                StartCoroutine(
+                    SmoothMove(
+                        _players[pkt.Players[i].Id].transform,
+                        new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY),
+                        _speed
+                    )
+                ); // moveSpeed는 초당 이동 거리
             }
         }
+    }
+
+    IEnumerator SmoothMove(Transform transform, Vector2 targetPosition, float speed)
+    {
+        Vector2 startPosition = transform.position;
+        float distance = Vector2.Distance(startPosition, targetPosition);
+        float duration = distance / speed; // 초당 이동 거리로 이동 시간 계산
+
+        float elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            transform.position = Vector2.Lerp(startPosition, targetPosition, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPosition; // 최종 위치 설정
     }
 
     // 플레이어 제거 (필요시)
@@ -83,5 +110,10 @@ public class PlayerManager : Singleton<PlayerManager>
     public string GetPlayerName()
     {
         return _playerName;
+    }
+
+    public float GetSpeed()
+    {
+        return _speed;
     }
 }

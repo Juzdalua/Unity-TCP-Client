@@ -68,63 +68,9 @@ public class MainMenuManager : Singleton<MainMenuManager>
             return;
 
         if (type == "login")
-            Login(id.Trim(), pwd.Trim());
+            ClientPacketHandler.Instance.Login(id.Trim(), pwd.Trim());
         else if (type == "signup")
-            Signup(id.Trim(), pwd.Trim());
-    }
-
-    void Login(string id, string pwd)
-    {
-        Account account = new Account()
-        {
-            Id = 0,
-            Name = id,
-            //Password = pwd,
-            Password = CreatedHashPwd(pwd),
-        };
-
-        C_LOGIN loginPkt = new C_LOGIN()
-        {
-            Account = account,
-        };
-        PlayerManager.Instance.SetPlayerName(id);
-        byte[] data = loginPkt.ToByteArray();
-        _networkManager.SendPacket(PacketId.PKT_C_LOGIN, data);
-    }
-
-    void Signup(string id, string pwd)
-    {
-        Account account = new Account()
-        {
-            Id = 0,
-            Name = id,
-            Password = CreatedHashPwd(pwd),
-        };
-
-        C_SIGNUP signupPkt = new C_SIGNUP()
-        {
-            Account = account,
-        };
-        byte[] data = signupPkt.ToByteArray();
-        _networkManager.SendPacket(PacketId.PKT_C_SIGNUP, data);
-    }
-
-    string CreatedHashPwd(string pwd)
-    {
-        // SHA256 해시 객체 생성
-        using (SHA256 sha256Hash = SHA256.Create())
-        {
-            // 문자열을 바이트 배열로 변환
-            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(pwd));
-
-            // 바이트 배열을 16진수 문자열로 변환
-            StringBuilder builder = new StringBuilder();
-            foreach (byte b in bytes)
-            {
-                builder.Append(b.ToString("x2"));
-            }
-            return builder.ToString();
-        }
+            ClientPacketHandler.Instance.Signup(id.Trim(), pwd.Trim());
     }
 
     void UpdateConnectedTMPUI()

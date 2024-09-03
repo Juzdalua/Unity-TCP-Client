@@ -21,17 +21,7 @@ public class GameManager : Singleton<GameManager>
         isStart = true;
         PlayerManager.Instance.CreatePlayer(loginPkt);
     }
-
-    public void EnterGame(ulong playerId)
-    {
-        C_ENTER_GAME enterPkt = new C_ENTER_GAME()
-        {
-            PlayerId = playerId
-        };
-
-        byte[] data = enterPkt.ToByteArray();
-        ClientManager.Instance.SendPacket(PacketId.PKT_C_ENTER_GAME, data);
-    }
+    
     public void ProcessChatToServer(ChatType type, string text)
     {
         Google.Protobuf.Protocol.ChatType _type;
@@ -59,16 +49,7 @@ public class GameManager : Singleton<GameManager>
                 break;
         }
 
-        C_CHAT chatPkt = new C_CHAT()
-        {
-            Type = _type,
-            PlayerId = PlayerManager.Instance.GetPlayerId(),
-            PlayerName = PlayerManager.Instance.GetPlayerName(),
-            Msg = text,
-        };
-
-        byte[] data = chatPkt.ToByteArray();
-        ClientManager.Instance.SendPacket(PacketId.PKT_C_CHAT, data);
+        ClientPacketHandler.Instance.Chat(_type, text);
     }
 
     public void ProcessChatFromServer(S_CHAT chatPkt)

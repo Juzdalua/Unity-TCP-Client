@@ -1,7 +1,6 @@
 using UnityEngine;
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
     private Rigidbody2D _rb;
     private SpriteRenderer _sprite;
     private Vector2 _inputVec;
@@ -37,7 +36,7 @@ public class Player : MonoBehaviour
 
     private void ApplyMovement()
     {
-        Vector2 movement = _inputVec.normalized * speed * Time.fixedDeltaTime;
+        Vector2 movement = _inputVec.normalized * PlayerManager.Instance.GetSpeed() * Time.fixedDeltaTime;
         _rb.MovePosition(_rb.position + movement);
         _currentPosition = _rb.position;
 
@@ -45,10 +44,15 @@ public class Player : MonoBehaviour
         {
             _sprite.flipX = _inputVec.x < 0;
         }
+
+        // Send To Server
+        
     }
 
     public Vector2 GetCurrentPosition()
     {
         return _currentPosition;
     }
+
+    
 }
