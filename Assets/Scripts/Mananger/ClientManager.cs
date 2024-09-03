@@ -2,11 +2,8 @@ using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using System;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.XR;
 
 public enum SceneType
 {

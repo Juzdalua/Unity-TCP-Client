@@ -2,13 +2,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Security.Cryptography;
-using System.Text;
-
-using Google.Protobuf.Protocol;
-using System;
-using Google.Protobuf;
-using Unity.VisualScripting;
 
 public class MainMenuManager : Singleton<MainMenuManager>
 {

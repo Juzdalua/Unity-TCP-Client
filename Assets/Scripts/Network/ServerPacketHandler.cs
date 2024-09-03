@@ -1,6 +1,4 @@
 using Google.Protobuf.Protocol;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -65,7 +63,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 S_CHAT chatPkt = S_CHAT.Parser.ParseFrom(data);
                 if (chatPkt.Msg != null)
                 {
-                    GameManager.Instance.ProcessChatFromServer(chatPkt);
+                    ChattingManager.Instance.ProcessChatFromServer(chatPkt);
                 }
                 else
                 {
