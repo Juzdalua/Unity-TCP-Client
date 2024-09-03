@@ -103,7 +103,7 @@ public class ClientManager : Singleton<ClientManager>
         catch (Exception e)
         {
             //Debug.Log("Failed to connect: " + e.Message);
-            _menuManager.AlertPopup("서버 연결에 실패했습니다.");
+            AlertManager.Instance.AlertPopup("서버 연결에 실패했습니다.");
             Task.Delay(5000).ContinueWith(_ => ConnectToServer(ipAddress, port, sceneType)); // 연결 실패 시 5초 후 재시도
         }
     }
@@ -129,7 +129,7 @@ public class ClientManager : Singleton<ClientManager>
             catch (Exception e)
             {
                 //Debug.Log("Heartbeat failed: " + e.Message);
-                _menuManager.AlertPopup("서버와 연결이 끊어졌습니다.");
+                AlertManager.Instance.AlertPopup("서버와 연결이 끊어졌습니다.");
                 HandleDisconnect();
             }
         }
@@ -175,7 +175,7 @@ public class ClientManager : Singleton<ClientManager>
                     }
                     else
                     {
-                        _menuManager.AlertPopup("데이터 수신 실패.");
+                        AlertManager.Instance.AlertPopup("데이터 수신 실패.");
                     }
                 }
             }
@@ -183,7 +183,7 @@ public class ClientManager : Singleton<ClientManager>
         catch (Exception e)
         {
             Debug.Log(_menuManager);
-            _menuManager.AlertPopup("데이터 수신 실패.");
+            AlertManager.Instance.AlertPopup("데이터 수신 실패.");
             //Debug.LogError("Failed to receive data: " + e.Message);
             HandleDisconnect();
         }
@@ -196,6 +196,19 @@ public class ClientManager : Singleton<ClientManager>
             case PacketId.PKT_S_TEST:
                 S_CHAT chat = S_CHAT.Parser.ParseFrom(data);
                 Debug.Log($"Received chat message: PlayerId={chat.PlayerId}, Msg={chat.Msg}");
+                break;
+
+            case PacketId.PKT_S_SIGNUP:
+                S_SIGNUP signup = S_SIGNUP.Parser.ParseFrom(data);
+                if (signup.Success)
+                {
+                    Debug.Log($"Signup Success");
+                }
+                else
+                {
+                    AlertManager.Instance.AlertPopup(signup.Error.ErrorMsg);
+                    Debug.Log($"Error Code: {signup.Error.ErrorCode}");
+                }
                 break;
 
             case PacketId.PKT_S_LOGIN:
@@ -213,26 +226,39 @@ public class ClientManager : Singleton<ClientManager>
                 }
                 else
                 {
-                    _menuManager.AlertPopup(login.Error.ErrorMsg);
+                    AlertManager.Instance.AlertPopup(login.Error.ErrorMsg);
                     Debug.Log($"Error Code: {login.Error.ErrorCode}");
                 }
                 break;
 
-            case PacketId.PKT_S_SIGNUP:
-                S_SIGNUP signup = S_SIGNUP.Parser.ParseFrom(data);
-                if (signup.Success)
+            case PacketId.PKT_S_ENTER_GAME:
+                S_ENTER_GAME enter = S_ENTER_GAME.Parser.ParseFrom(data);
+                if (enter.Success)
                 {
-                    Debug.Log($"Signup Success");
+                    Debug.Log($"Enter Game Success");
                 }
                 else
                 {
-                    _menuManager.AlertPopup(signup.Error.ErrorMsg);
-                    Debug.Log($"Error Code: {signup.Error.ErrorCode}");
+                    //AlertManager.Instance.AlertPopup(enter.Error.ErrorMsg);
+                    Debug.Log($"Error Code: EnterGame");
+                }
+                break;
+
+            case PacketId.PKT_S_CHAT:
+                S_CHAT chatPkt = S_CHAT.Parser.ParseFrom(data);
+                if (chatPkt.Msg != null || chatPkt.PlayerId != 0)
+                {
+                    Debug.Log($"CHAT Success");
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: CHAT");
                 }
                 break;
 
             default:
-                _menuManager.AlertPopup("잘못된 정보");
+                AlertManager.Instance.AlertPopup("잘못된 정보");
                 Debug.Log($"Unknown packet id: {id}");
                 break;
         }
@@ -292,7 +318,7 @@ public class ClientManager : Singleton<ClientManager>
             }
             catch (Exception e)
             {
-                _menuManager.AlertPopup("데이터 송신 실패");
+                AlertManager.Instance.AlertPopup("데이터 송신 실패");
                 //Debug.Log("Failed to send data: " + e.Message);
                 HandleDisconnect();
             }
