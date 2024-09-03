@@ -11,11 +11,11 @@ public class GameManager : Singleton<GameManager>
     {    
         if(SceneManager.GetActiveScene().name == "01.MainScene" && !isStart && loginPkt != null)
         {
-            ProcessLogin();
+            ProcessLoginToServer();
         }
     }
 
-    public void ProcessLogin()
+    public void ProcessLoginToServer()
     {
 
         isStart = true;
@@ -28,7 +28,6 @@ public class GameManager : Singleton<GameManager>
 
         //TODO Player HP Set
 
-        Debug.Log(SceneManager.GetActiveScene().name);
         PlayerManager.Instance.AddOrUpdatePlayer(playerId.ToString(), initialPosition);
 
         // 서버에 플레이어 생성 정보 전송 (옵션)
@@ -45,5 +44,86 @@ public class GameManager : Singleton<GameManager>
 
         byte[] data = enterPkt.ToByteArray();
         ClientManager.Instance.SendPacket(PacketId.PKT_C_ENTER_GAME, data);
+    }
+    public void ProcessChatToServer(ChatType type, string text)
+    {
+        Google.Protobuf.Protocol.ChatType _type;
+        switch (type)
+        {
+            default:
+            case ChatType.Normal:
+                _type = Google.Protobuf.Protocol.ChatType.Normal;
+                break;
+
+            case ChatType.Guild:
+                _type = Google.Protobuf.Protocol.ChatType.Guild;
+                break;
+
+            case ChatType.Whisper:
+                _type = Google.Protobuf.Protocol.ChatType.Whisper;
+                break;
+
+            case ChatType.System:
+                _type = Google.Protobuf.Protocol.ChatType.System;
+                break;
+        }
+
+        C_CHAT chatPkt = new C_CHAT()
+        {
+            Type = _type,
+            PlayerId = PlayerManager.Instance.GetPlayerId(),
+            PlayerName = PlayerManager.Instance.GetPlayerName(),
+            Msg = text,
+        };
+
+        byte[] data = chatPkt.ToByteArray();
+        ClientManager.Instance.SendPacket(PacketId.PKT_C_CHAT, data);
+    }
+
+    public void ProcessChatFromServer(S_CHAT chatPkt)
+    {
+        switch (chatPkt.Type)
+        {
+            default:
+            case Google.Protobuf.Protocol.ChatType.Normal:
+                ChattingManager.Instance.PrintChatData(
+                    ChatType.Normal, 
+                    ChattingManager.Instance.ChatTypeToColor(ChatType.Normal), 
+                    $"{chatPkt.PlayerName}: {chatPkt.Msg}"
+                );
+                break;
+
+            case Google.Protobuf.Protocol.ChatType.Party:
+                ChattingManager.Instance.PrintChatData(
+                    ChatType.Party,
+                    ChattingManager.Instance.ChatTypeToColor(ChatType.Party),
+                    $"{chatPkt.PlayerName}: {chatPkt.Msg}"
+                );
+                break;
+
+            case Google.Protobuf.Protocol.ChatType.Guild:
+                ChattingManager.Instance.PrintChatData(
+                    ChatType.Guild,
+                    ChattingManager.Instance.ChatTypeToColor(ChatType.Guild),
+                    $"{chatPkt.PlayerName}: {chatPkt.Msg}"
+                );
+                break;
+
+            case Google.Protobuf.Protocol.ChatType.Whisper:
+                ChattingManager.Instance.PrintChatData(
+                    ChatType.Whisper,
+                    ChattingManager.Instance.ChatTypeToColor(ChatType.Whisper),
+                    $"{chatPkt.PlayerName}: {chatPkt.Msg}"
+                );
+                break;
+
+            case Google.Protobuf.Protocol.ChatType.System:
+                ChattingManager.Instance.PrintChatData(
+                    ChatType.System,
+                    ChattingManager.Instance.ChatTypeToColor(ChatType.System),
+                    $"{chatPkt.Msg}"
+                );
+                break;
+        }
     }
 }

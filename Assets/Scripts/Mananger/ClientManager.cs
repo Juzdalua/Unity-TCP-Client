@@ -73,11 +73,16 @@ public class ClientManager : Singleton<ClientManager>
         }
     }
 
-    public void CheckSocket(SceneType sceneType)
+    private void Update()
+    {
+        CheckSocket();
+    }
+
+    public void CheckSocket()
     {
         if (!_isConnected)
         {
-            ConnectToServer(serverIP, serverPort, sceneType);
+            ConnectToServer(serverIP, serverPort);
         }
         else
         {
@@ -86,7 +91,7 @@ public class ClientManager : Singleton<ClientManager>
         }
     }
 
-    public void ConnectToServer(string ipAddress, int port, SceneType sceneType)
+    public void ConnectToServer(string ipAddress, int port)
     {
         try
         {
@@ -94,20 +99,12 @@ public class ClientManager : Singleton<ClientManager>
             _clientSocket.Connect(ipAddress, port);
             _isConnected = true;
             Debug.Log("Connected to server");
-
-            if (sceneType == SceneType.Menu)
-            {
-            }
-            else if (sceneType == SceneType.Game)
-            {
-            }
-
         }
         catch (Exception e)
         {
             //Debug.Log("Failed to connect: " + e.Message);
             AlertManager.Instance.AlertPopup("서버 연결에 실패했습니다.");
-            Task.Delay(5000).ContinueWith(_ => ConnectToServer(ipAddress, port, sceneType)); // 연결 실패 시 5초 후 재시도
+            Task.Delay(5000).ContinueWith(_ => ConnectToServer(ipAddress, port)); // 연결 실패 시 5초 후 재시도
         }
     }
 
@@ -218,7 +215,7 @@ public class ClientManager : Singleton<ClientManager>
                 S_LOGIN login = S_LOGIN.Parser.ParseFrom(data);
                 if (login.Success)
                 {
-                    Debug.Log($"Login Success: {login.Player.Id}");
+                    PlayerManager.Instance.SetPlayerId(login.Player.Id);
                     
                     //Scene 전환
                     SetSceneType(SceneType.Game);
@@ -238,7 +235,9 @@ public class ClientManager : Singleton<ClientManager>
                 S_ENTER_GAME enter = S_ENTER_GAME.Parser.ParseFrom(data);
                 if (enter.Success)
                 {
-                    Debug.Log($"Enter Game Success");
+                    // TODO 위치 동기화
+
+                    // TODO 다른 플레이어 동기화
                 }
                 else
                 {
@@ -249,9 +248,9 @@ public class ClientManager : Singleton<ClientManager>
 
             case PacketId.PKT_S_CHAT:
                 S_CHAT chatPkt = S_CHAT.Parser.ParseFrom(data);
-                if (chatPkt.Msg != null || chatPkt.PlayerId != 0)
+                if (chatPkt.Msg != null)
                 {
-                    Debug.Log($"CHAT Success");
+                    GameManager.Instance.ProcessChatFromServer(chatPkt);
                 }
                 else
                 {

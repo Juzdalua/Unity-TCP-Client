@@ -37,12 +37,18 @@ namespace Google.Protobuf.Protocol {
             "ASgIEiAKBnBsYXllchgCIAEoCzIQLlByb3RvY29sLlBsYXllchIhCgVlcnJv",
             "chgDIAEoCzISLlByb3RvY29sLkVycm9yT2JqIiAKDENfRU5URVJfR0FNRRIQ",
             "CghwbGF5ZXJJZBgBIAEoBCIfCgxTX0VOVEVSX0dBTUUSDwoHc3VjY2VzcxgB",
-            "IAEoCCIVCgZDX0NIQVQSCwoDbXNnGAEgASgJIicKBlNfQ0hBVBIQCghwbGF5",
-            "ZXJJZBgBIAEoBBILCgNtc2cYAiABKAlCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Q",
-            "cm90b2NvbGIGcHJvdG8z"));
+            "IAEoCCJdCgZDX0NIQVQSIAoEdHlwZRgBIAEoDjISLlByb3RvY29sLkNoYXRU",
+            "eXBlEhAKCHBsYXllcklkGAIgASgEEhIKCnBsYXllck5hbWUYAyABKAkSCwoD",
+            "bXNnGAQgASgJIl0KBlNfQ0hBVBIgCgR0eXBlGAEgASgOMhIuUHJvdG9jb2wu",
+            "Q2hhdFR5cGUSEAoIcGxheWVySWQYAiABKAQSEgoKcGxheWVyTmFtZRgDIAEo",
+            "CRILCgNtc2cYBCABKAkqiwEKCENoYXRUeXBlEhIKDkNIQVRfVFlQRV9OT05F",
+            "EAASFAoQQ0hBVF9UWVBFX05PUk1BTBABEhMKD0NIQVRfVFlQRV9QQVJUWRAC",
+            "EhMKD0NIQVRfVFlQRV9HVUlMRBADEhUKEUNIQVRfVFlQRV9XSElTUEVSEAQS",
+            "FAoQQ0hBVF9UWVBFX1NZU1RFTRAFQhuqAhhHb29nbGUuUHJvdG9idWYuUHJv",
+            "dG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.ChatType), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.ErrorObj), global::Google.Protobuf.Protocol.ErrorObj.Parser, new[]{ "ErrorCode", "ErrorMsg" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Account), global::Google.Protobuf.Protocol.Account.Parser, new[]{ "Id", "Name", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.Player), global::Google.Protobuf.Protocol.Player.Parser, new[]{ "Id", "AccountId", "PosX", "PosY", "MaxHP", "CurrentHP" }, null, null, null, null),
@@ -52,13 +58,25 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_LOGIN), global::Google.Protobuf.Protocol.S_LOGIN.Parser, new[]{ "Success", "Player", "Error" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_ENTER_GAME), global::Google.Protobuf.Protocol.C_ENTER_GAME.Parser, new[]{ "PlayerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ENTER_GAME), global::Google.Protobuf.Protocol.S_ENTER_GAME.Parser, new[]{ "Success" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_CHAT), global::Google.Protobuf.Protocol.C_CHAT.Parser, new[]{ "Msg" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_CHAT), global::Google.Protobuf.Protocol.S_CHAT.Parser, new[]{ "PlayerId", "Msg" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_CHAT), global::Google.Protobuf.Protocol.C_CHAT.Parser, new[]{ "Type", "PlayerId", "PlayerName", "Msg" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_CHAT), global::Google.Protobuf.Protocol.S_CHAT.Parser, new[]{ "Type", "PlayerId", "PlayerName", "Msg" }, null, null, null, null)
           }));
     }
     #endregion
 
   }
+  #region Enums
+  public enum ChatType {
+    [pbr::OriginalName("CHAT_TYPE_NONE")] None = 0,
+    [pbr::OriginalName("CHAT_TYPE_NORMAL")] Normal = 1,
+    [pbr::OriginalName("CHAT_TYPE_PARTY")] Party = 2,
+    [pbr::OriginalName("CHAT_TYPE_GUILD")] Guild = 3,
+    [pbr::OriginalName("CHAT_TYPE_WHISPER")] Whisper = 4,
+    [pbr::OriginalName("CHAT_TYPE_SYSTEM")] System = 5,
+  }
+
+  #endregion
+
   #region Messages
   public sealed partial class ErrorObj : pb::IMessage<ErrorObj>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -2247,6 +2265,9 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public C_CHAT(C_CHAT other) : this() {
+      type_ = other.type_;
+      playerId_ = other.playerId_;
+      playerName_ = other.playerName_;
       msg_ = other.msg_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -2257,8 +2278,44 @@ namespace Google.Protobuf.Protocol {
       return new C_CHAT(this);
     }
 
+    /// <summary>Field number for the "type" field.</summary>
+    public const int TypeFieldNumber = 1;
+    private global::Google.Protobuf.Protocol.ChatType type_ = global::Google.Protobuf.Protocol.ChatType.None;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Google.Protobuf.Protocol.ChatType Type {
+      get { return type_; }
+      set {
+        type_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "playerId" field.</summary>
+    public const int PlayerIdFieldNumber = 2;
+    private ulong playerId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong PlayerId {
+      get { return playerId_; }
+      set {
+        playerId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "playerName" field.</summary>
+    public const int PlayerNameFieldNumber = 3;
+    private string playerName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string PlayerName {
+      get { return playerName_; }
+      set {
+        playerName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "msg" field.</summary>
-    public const int MsgFieldNumber = 1;
+    public const int MsgFieldNumber = 4;
     private string msg_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2284,6 +2341,9 @@ namespace Google.Protobuf.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Type != other.Type) return false;
+      if (PlayerId != other.PlayerId) return false;
+      if (PlayerName != other.PlayerName) return false;
       if (Msg != other.Msg) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2292,6 +2352,9 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) hash ^= Type.GetHashCode();
+      if (PlayerId != 0UL) hash ^= PlayerId.GetHashCode();
+      if (PlayerName.Length != 0) hash ^= PlayerName.GetHashCode();
       if (Msg.Length != 0) hash ^= Msg.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -2311,8 +2374,20 @@ namespace Google.Protobuf.Protocol {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) {
+        output.WriteRawTag(8);
+        output.WriteEnum((int) Type);
+      }
+      if (PlayerId != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(PlayerId);
+      }
+      if (PlayerName.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(PlayerName);
+      }
       if (Msg.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(34);
         output.WriteString(Msg);
       }
       if (_unknownFields != null) {
@@ -2325,8 +2400,20 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) {
+        output.WriteRawTag(8);
+        output.WriteEnum((int) Type);
+      }
+      if (PlayerId != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(PlayerId);
+      }
+      if (PlayerName.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(PlayerName);
+      }
       if (Msg.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(34);
         output.WriteString(Msg);
       }
       if (_unknownFields != null) {
@@ -2339,6 +2426,15 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
+      }
+      if (PlayerId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(PlayerId);
+      }
+      if (PlayerName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(PlayerName);
+      }
       if (Msg.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Msg);
       }
@@ -2353,6 +2449,15 @@ namespace Google.Protobuf.Protocol {
     public void MergeFrom(C_CHAT other) {
       if (other == null) {
         return;
+      }
+      if (other.Type != global::Google.Protobuf.Protocol.ChatType.None) {
+        Type = other.Type;
+      }
+      if (other.PlayerId != 0UL) {
+        PlayerId = other.PlayerId;
+      }
+      if (other.PlayerName.Length != 0) {
+        PlayerName = other.PlayerName;
       }
       if (other.Msg.Length != 0) {
         Msg = other.Msg;
@@ -2372,7 +2477,19 @@ namespace Google.Protobuf.Protocol {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
+          case 8: {
+            Type = (global::Google.Protobuf.Protocol.ChatType) input.ReadEnum();
+            break;
+          }
+          case 16: {
+            PlayerId = input.ReadUInt64();
+            break;
+          }
+          case 26: {
+            PlayerName = input.ReadString();
+            break;
+          }
+          case 34: {
             Msg = input.ReadString();
             break;
           }
@@ -2391,7 +2508,19 @@ namespace Google.Protobuf.Protocol {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
+          case 8: {
+            Type = (global::Google.Protobuf.Protocol.ChatType) input.ReadEnum();
+            break;
+          }
+          case 16: {
+            PlayerId = input.ReadUInt64();
+            break;
+          }
+          case 26: {
+            PlayerName = input.ReadString();
+            break;
+          }
+          case 34: {
             Msg = input.ReadString();
             break;
           }
@@ -2436,7 +2565,9 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public S_CHAT(S_CHAT other) : this() {
+      type_ = other.type_;
       playerId_ = other.playerId_;
+      playerName_ = other.playerName_;
       msg_ = other.msg_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -2447,8 +2578,20 @@ namespace Google.Protobuf.Protocol {
       return new S_CHAT(this);
     }
 
+    /// <summary>Field number for the "type" field.</summary>
+    public const int TypeFieldNumber = 1;
+    private global::Google.Protobuf.Protocol.ChatType type_ = global::Google.Protobuf.Protocol.ChatType.None;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Google.Protobuf.Protocol.ChatType Type {
+      get { return type_; }
+      set {
+        type_ = value;
+      }
+    }
+
     /// <summary>Field number for the "playerId" field.</summary>
-    public const int PlayerIdFieldNumber = 1;
+    public const int PlayerIdFieldNumber = 2;
     private ulong playerId_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2459,8 +2602,20 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "playerName" field.</summary>
+    public const int PlayerNameFieldNumber = 3;
+    private string playerName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string PlayerName {
+      get { return playerName_; }
+      set {
+        playerName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "msg" field.</summary>
-    public const int MsgFieldNumber = 2;
+    public const int MsgFieldNumber = 4;
     private string msg_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2486,7 +2641,9 @@ namespace Google.Protobuf.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Type != other.Type) return false;
       if (PlayerId != other.PlayerId) return false;
+      if (PlayerName != other.PlayerName) return false;
       if (Msg != other.Msg) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2495,7 +2652,9 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) hash ^= Type.GetHashCode();
       if (PlayerId != 0UL) hash ^= PlayerId.GetHashCode();
+      if (PlayerName.Length != 0) hash ^= PlayerName.GetHashCode();
       if (Msg.Length != 0) hash ^= Msg.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -2515,12 +2674,20 @@ namespace Google.Protobuf.Protocol {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (PlayerId != 0UL) {
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) {
         output.WriteRawTag(8);
+        output.WriteEnum((int) Type);
+      }
+      if (PlayerId != 0UL) {
+        output.WriteRawTag(16);
         output.WriteUInt64(PlayerId);
       }
+      if (PlayerName.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(PlayerName);
+      }
       if (Msg.Length != 0) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(34);
         output.WriteString(Msg);
       }
       if (_unknownFields != null) {
@@ -2533,12 +2700,20 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (PlayerId != 0UL) {
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) {
         output.WriteRawTag(8);
+        output.WriteEnum((int) Type);
+      }
+      if (PlayerId != 0UL) {
+        output.WriteRawTag(16);
         output.WriteUInt64(PlayerId);
       }
+      if (PlayerName.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(PlayerName);
+      }
       if (Msg.Length != 0) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(34);
         output.WriteString(Msg);
       }
       if (_unknownFields != null) {
@@ -2551,8 +2726,14 @@ namespace Google.Protobuf.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (Type != global::Google.Protobuf.Protocol.ChatType.None) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
+      }
       if (PlayerId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(PlayerId);
+      }
+      if (PlayerName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(PlayerName);
       }
       if (Msg.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Msg);
@@ -2569,8 +2750,14 @@ namespace Google.Protobuf.Protocol {
       if (other == null) {
         return;
       }
+      if (other.Type != global::Google.Protobuf.Protocol.ChatType.None) {
+        Type = other.Type;
+      }
       if (other.PlayerId != 0UL) {
         PlayerId = other.PlayerId;
+      }
+      if (other.PlayerName.Length != 0) {
+        PlayerName = other.PlayerName;
       }
       if (other.Msg.Length != 0) {
         Msg = other.Msg;
@@ -2591,10 +2778,18 @@ namespace Google.Protobuf.Protocol {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
+            Type = (global::Google.Protobuf.Protocol.ChatType) input.ReadEnum();
+            break;
+          }
+          case 16: {
             PlayerId = input.ReadUInt64();
             break;
           }
-          case 18: {
+          case 26: {
+            PlayerName = input.ReadString();
+            break;
+          }
+          case 34: {
             Msg = input.ReadString();
             break;
           }
@@ -2614,10 +2809,18 @@ namespace Google.Protobuf.Protocol {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
+            Type = (global::Google.Protobuf.Protocol.ChatType) input.ReadEnum();
+            break;
+          }
+          case 16: {
             PlayerId = input.ReadUInt64();
             break;
           }
-          case 18: {
+          case 26: {
+            PlayerName = input.ReadString();
+            break;
+          }
+          case 34: {
             Msg = input.ReadString();
             break;
           }

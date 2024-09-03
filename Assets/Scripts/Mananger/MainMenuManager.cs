@@ -35,8 +35,6 @@ public class MainMenuManager : Singleton<MainMenuManager>
         EnterInput();
         UpdateConnectedTMPUI();
         AlertManager.Instance.FadeoutAlert();
-
-        CheckSocket();
     }
 
     void TabInput()
@@ -89,6 +87,7 @@ public class MainMenuManager : Singleton<MainMenuManager>
         {
             Account = account,
         };
+        PlayerManager.Instance.SetPlayerName(id);
         byte[] data = loginPkt.ToByteArray();
         _networkManager.SendPacket(PacketId.PKT_C_LOGIN, data);
     }
@@ -108,14 +107,6 @@ public class MainMenuManager : Singleton<MainMenuManager>
         };
         byte[] data = signupPkt.ToByteArray();
         _networkManager.SendPacket(PacketId.PKT_C_SIGNUP, data);
-    }
-
-    void CheckSocket()
-    {
-        if (_networkManager != null)
-        {
-            _networkManager.CheckSocket(SceneType.Menu);
-        }
     }
 
     string CreatedHashPwd(string pwd)

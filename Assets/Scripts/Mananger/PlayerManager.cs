@@ -9,7 +9,8 @@ public class PlayerManager : Singleton<PlayerManager>
 
     private Dictionary<string, GameObject> _players = new Dictionary<string, GameObject>();
 
-    [SerializeField] int _playerId = 0;
+    [SerializeField] ulong _playerId = 0;
+    [SerializeField] string _playerName = "";
 
     // 플레이어 추가 또는 업데이트
     public void AddOrUpdatePlayer(string playerId, Vector2 position)
@@ -52,13 +53,22 @@ public class PlayerManager : Singleton<PlayerManager>
     //    return playerPrefabs[index];
     //}
 
-    void SetPlayerId(int playerId)
+    public void SetPlayerId(ulong playerId)
     {
         _playerId = playerId;
     }
 
-    int GetPlayerId()
+    public ulong GetPlayerId()
     {
         return _playerId;
+    }
+    public void SetPlayerName(string playerName)
+    {
+        _playerName = playerName;
+    }
+
+    public string GetPlayerName()
+    {
+        return _playerName;
     }
 }
