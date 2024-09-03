@@ -52,21 +52,24 @@ public class PlayerManager : Singleton<PlayerManager>
             else
             {
                 // 기존 플레이어의 위치 업데이트
-                //_players[pkt.Players[i].Id].transform.position = new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY);
-                // 기존 플레이어의 위치 업데이트 (부드럽게 이동)
                 StartCoroutine(
                     SmoothMove(
                         _players[pkt.Players[i].Id].transform,
                         new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY),
                         _speed
                     )
-                ); // moveSpeed는 초당 이동 거리
+                );
             }
         }
     }
 
     IEnumerator SmoothMove(Transform transform, Vector2 targetPosition, float speed)
     {
+        if(transform.position.x > targetPosition.x)
+        {
+            transform.GetComponent<Player>().FlipX(true);
+        }
+
         Vector2 startPosition = transform.position;
         float distance = Vector2.Distance(startPosition, targetPosition);
         float duration = distance / speed; // 초당 이동 거리로 이동 시간 계산
@@ -80,6 +83,30 @@ public class PlayerManager : Singleton<PlayerManager>
         }
 
         transform.position = targetPosition; // 최종 위치 설정
+    }
+
+    public void MoveUpdatePlayer(Google.Protobuf.Protocol.Player recvPlayer)
+    {
+        if (!_players.ContainsKey(recvPlayer.Id))
+        {
+            GameObject prefab = playerPrefab;
+
+            // 새로운 플레이어 생성
+            GameObject player = Instantiate(prefab, new Vector2(recvPlayer.PosX, recvPlayer.PosY), Quaternion.identity);
+            player.name = recvPlayer.Id.ToString();
+            _players[recvPlayer.Id] = player;
+        }
+        else
+        {
+            // 기존 플레이어의 위치 업데이트
+            StartCoroutine(
+                SmoothMove(
+                    _players[recvPlayer.Id].transform,
+                    new Vector2(recvPlayer.PosX, recvPlayer.PosY),
+                    _speed
+                )
+            ); // moveSpeed는 초당 이동 거리
+        }
     }
 
     // 플레이어 제거 (필요시)

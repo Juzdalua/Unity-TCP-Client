@@ -72,6 +72,20 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 }
                 break;
 
+            case PacketId.PKT_S_MOVE:
+                S_MOVE movePkt = S_MOVE.Parser.ParseFrom(data);
+                //TODO
+                if (movePkt.Player != null)
+                {
+                    PlayerManager.Instance.MoveUpdatePlayer(movePkt.Player);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: CHAT");
+                }
+                break;
+
             default:
                 AlertManager.Instance.AlertPopup("잘못된 정보");
                 Debug.Log($"Unknown packet id: {id}");

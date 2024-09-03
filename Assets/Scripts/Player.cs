@@ -8,8 +8,6 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        //Debug.Log($"PC: {GetComponent<PlayerController>().GetPlayerId()} / PM: {PlayerManager.Instance.GetPlayerId()}");
-
         _rb = GetComponent<Rigidbody2D>();
         _sprite = GetComponent<SpriteRenderer>();
     }
@@ -45,8 +43,11 @@ public class Player : MonoBehaviour
             _sprite.flipX = _inputVec.x < 0;
         }
 
-        // Send To Server
-        
+        if (_inputVec.magnitude != 0)
+        {
+            // Send To Server
+            ClientPacketHandler.Instance.Move(PlayerManager.Instance.GetPlayerId(), _currentPosition.x, _currentPosition.y);
+        }
     }
 
     public Vector2 GetCurrentPosition()
@@ -54,5 +55,8 @@ public class Player : MonoBehaviour
         return _currentPosition;
     }
 
-    
+    public void FlipX(bool left)
+    {
+        _sprite.flipX = left;
+    }
 }

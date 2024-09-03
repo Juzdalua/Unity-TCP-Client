@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using UnityEngine;
 
 public class ClientPacketHandler : Singleton<ClientPacketHandler>
 {
@@ -62,5 +63,19 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
 
         byte[] data = chatPkt.ToByteArray();
         ClientManager.Instance.SendPacket(PacketId.PKT_C_CHAT, data);
+    }
+
+    public void Move(ulong playerId, float posX, float posY)
+    {
+        C_MOVE movePkt = new C_MOVE()
+        {
+            PlayerId = playerId,
+            PosX = posX,
+            PosY = posY
+        };
+
+        Debug.Log($"(POSX: {posX}, POSY: {posY}) / (POSX: {movePkt.PosX}, POSY: {movePkt.PosY})");
+        byte[] data = movePkt.ToByteArray();
+        ClientManager.Instance.SendPacket(PacketId.PKT_C_MOVE, data);
     }
 }
