@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Google.Protobuf.Protocol;
 using System.Collections;
+using TMPro;
 
 public class PlayerManager : Singleton<PlayerManager>
 {
@@ -25,6 +26,9 @@ public class PlayerManager : Singleton<PlayerManager>
         player.name = pkt.Player.Id.ToString();
         _players[pkt.Player.Id] = player;
 
+        if (playerId == PlayerManager.Instance.GetPlayerId())
+            SetPlayerCreateInfo(player);
+
         ClientPacketHandler.Instance.EnterGame(playerId);
     }
 
@@ -42,30 +46,29 @@ public class PlayerManager : Singleton<PlayerManager>
                 player.name = pkt.Players[i].Id.ToString();
                 _players[pkt.Players[i].Id] = player;
 
-                if (pkt.ToPlayer == ToPlayer.Owner)
-                {
-                    SetPlayerId(pkt.Players[0].Id);
-                    player.GetComponent<PlayerController>().SetPlayerId(pkt.Players[0].Id);
-                    player.GetComponent<PlayerController>().SetPlayerName(GetPlayerName());
-                }
+                if (pkt.Players[i].Id == PlayerManager.Instance.GetPlayerId())
+                    SetPlayerCreateInfo(player);
             }
             else
             {
                 // 기존 플레이어의 위치 업데이트
-                StartCoroutine(
-                    SmoothMove(
-                        _players[pkt.Players[i].Id].transform,
-                        new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY),
-                        _speed
-                    )
-                );
+                if (Vector2.Distance(_players[pkt.Players[i].Id].transform.position, new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY)) > 0.1f)
+                {
+                    //StartCoroutine(
+                    //    SmoothMove(
+                    //        _players[pkt.Players[i].Id].transform,
+                    //        new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY),
+                    //        _speed
+                    //    )
+                    //);
+                }
             }
         }
     }
 
     IEnumerator SmoothMove(Transform transform, Vector2 targetPosition, float speed)
     {
-        if(transform.position.x > targetPosition.x)
+        if (transform.position.x > targetPosition.x)
         {
             transform.GetComponent<Player>().FlipX(true);
         }
@@ -87,25 +90,28 @@ public class PlayerManager : Singleton<PlayerManager>
 
     public void MoveUpdatePlayer(Google.Protobuf.Protocol.Player recvPlayer)
     {
+        // 새로운 플레이어 생성
         if (!_players.ContainsKey(recvPlayer.Id))
         {
             GameObject prefab = playerPrefab;
 
-            // 새로운 플레이어 생성
             GameObject player = Instantiate(prefab, new Vector2(recvPlayer.PosX, recvPlayer.PosY), Quaternion.identity);
             player.name = recvPlayer.Id.ToString();
             _players[recvPlayer.Id] = player;
         }
+        // 기존 플레이어의 위치 업데이트
         else
         {
-            // 기존 플레이어의 위치 업데이트
-            StartCoroutine(
-                SmoothMove(
-                    _players[recvPlayer.Id].transform,
-                    new Vector2(recvPlayer.PosX, recvPlayer.PosY),
-                    _speed
-                )
-            ); // moveSpeed는 초당 이동 거리
+            if (Vector2.Distance(_players[recvPlayer.Id].transform.position, new Vector2(recvPlayer.PosX, recvPlayer.PosY)) > 0.1f)
+            {
+                //StartCoroutine(
+                //    SmoothMove(
+                //        _players[recvPlayer.Id].transform,
+                //        new Vector2(recvPlayer.PosX, recvPlayer.PosY),
+                //        _speed
+                //    )
+                //);
+            }
         }
     }
 
@@ -142,5 +148,23 @@ public class PlayerManager : Singleton<PlayerManager>
     public float GetSpeed()
     {
         return _speed;
+    }
+
+    public void SetPlayerCreateInfo(GameObject player)
+    {
+        player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetPlayerId());
+        player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetPlayerName());
+        player.GetComponentInChildren<TextMeshProUGUI>().text =
+            PlayerManager.Instance.GetPlayerName() ?? "UNKNOWN";
+    }
+
+    public bool CanGo(Vector3 destPos)
+    {
+        foreach (GameObject player in _players.Values)
+        {
+            if (player.transform.position == destPos)
+                return false;
+        }
+        return true;
     }
 }

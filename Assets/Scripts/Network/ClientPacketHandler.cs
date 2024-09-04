@@ -65,7 +65,7 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         ClientManager.Instance.SendPacket(PacketId.PKT_C_CHAT, data);
     }
 
-    public void Move(ulong playerId, float posX, float posY)
+    public void Move(ulong playerId, float posX, float posY, MoveDir dir)
     {
         C_MOVE movePkt = new C_MOVE()
         {
@@ -74,7 +74,7 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
             PosY = posY
         };
 
-        Debug.Log($"(POSX: {posX}, POSY: {posY}) / (POSX: {movePkt.PosX}, POSY: {movePkt.PosY})");
+        Debug.Log($"({dir} / POSX: {posX}, POSY: {posY})");
         byte[] data = movePkt.ToByteArray();
         ClientManager.Instance.SendPacket(PacketId.PKT_C_MOVE, data);
     }
