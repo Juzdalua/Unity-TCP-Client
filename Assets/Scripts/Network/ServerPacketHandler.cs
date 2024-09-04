@@ -6,6 +6,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 {
     public void ProcessReceivedPacket(PacketId id, byte[] data)
     {
+        Debug.Log($"ProcessReceivedPacket: {id} / {data}");
         switch (id)
         {
             case PacketId.PKT_S_TEST:

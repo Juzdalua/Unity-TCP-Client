@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ClientPacketHandler : Singleton<ClientPacketHandler>
 {
-    public void Signup(string id, string pwd)
+    public async void Signup(string id, string pwd)
     {
         Account account = new Account()
         {
@@ -18,10 +18,10 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
             Account = account,
         };
         byte[] data = signupPkt.ToByteArray();
-        ClientManager.Instance.SendPacket(PacketId.PKT_C_SIGNUP, data);
+        await ClientManager.Instance.SendPacket(PacketId.PKT_C_SIGNUP, data);
     }
 
-    public void Login(string id, string pwd)
+    public async void Login(string id, string pwd)
     {
         Account account = new Account()
         {
@@ -37,10 +37,10 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         };
         PlayerManager.Instance.SetPlayerName(id);
         byte[] data = loginPkt.ToByteArray();
-        ClientManager.Instance.SendPacket(PacketId.PKT_C_LOGIN, data);
+        await ClientManager.Instance.SendPacket(PacketId.PKT_C_LOGIN, data);
     }
 
-    public void EnterGame(ulong playerId)
+    public async void EnterGame(ulong playerId)
     {
         C_ENTER_GAME enterPkt = new C_ENTER_GAME()
         {
@@ -48,10 +48,10 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         };
 
         byte[] data = enterPkt.ToByteArray();
-        ClientManager.Instance.SendPacket(PacketId.PKT_C_ENTER_GAME, data);
+        await ClientManager.Instance.SendPacket(PacketId.PKT_C_ENTER_GAME, data);
     }
 
-    public void Chat(Google.Protobuf.Protocol.ChatType _type, string text)
+    public async void Chat(Google.Protobuf.Protocol.ChatType _type, string text)
     {
         C_CHAT chatPkt = new C_CHAT()
         {
@@ -62,10 +62,10 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         };
 
         byte[] data = chatPkt.ToByteArray();
-        ClientManager.Instance.SendPacket(PacketId.PKT_C_CHAT, data);
+        await ClientManager.Instance.SendPacket(PacketId.PKT_C_CHAT, data);
     }
 
-    public void Move(ulong playerId, float posX, float posY, MoveDir dir)
+    public async void Move(ulong playerId, float posX, float posY, MoveDir dir)
     {
         C_MOVE movePkt = new C_MOVE()
         {
@@ -74,8 +74,8 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
             PosY = posY
         };
 
-        Debug.Log($"({dir} / POSX: {posX}, POSY: {posY})");
+        //Debug.Log($"({dir} / POSX: {posX}, POSY: {posY})");
         byte[] data = movePkt.ToByteArray();
-        ClientManager.Instance.SendPacket(PacketId.PKT_C_MOVE, data);
+        await ClientManager.Instance.SendPacket(PacketId.PKT_C_MOVE, data);
     }
 }

@@ -1,6 +1,7 @@
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -32,16 +33,8 @@ public enum PacketId
     PKT_S_MOVE = 1011,
 };
 
-public class PacketMessage
-{
-    public ushort Id { get; set; }
-    public IMessage Message { get; set; }
-}
-
-
 public class ClientManager : Singleton<ClientManager>
 {
-    [Header("Server Info")]
     private Socket _clientSocket;
     private bool _isConnected = false;
     public string serverIP = "127.0.0.1"; // 서버 IP 주소
@@ -54,64 +47,70 @@ public class ClientManager : Singleton<ClientManager>
     [SerializeField] private MainMenuManager _menuManager;
     [SerializeField] private PlayerManager _playerManager;
 
-    void Start()
+    private Task _receiveTask;
+
+    async void Start()
     {
         _menuManager = MainMenuManager.Instance.GetComponent<MainMenuManager>();
         _playerManager = PlayerManager.Instance.GetComponent<PlayerManager>();
 
+        await ConnectToServerAsync(serverIP, serverPort);
 
-        if (_sceneType == SceneType.Menu)
-        {
-
-        }
-        else if (_sceneType == SceneType.Game)
-        {
-
-        }
+        // 비동기 데이터 수신 루프 시작
+        _receiveTask = Task.Run(() => ReceivePacketLoopAsync());
     }
 
     private void Update()
     {
+        // 클라이언트 상태 확인 및 핸드쉐이크 처리
         CheckSocket();
     }
 
-    public void CheckSocket()
+    private async Task ReceivePacketLoopAsync()
     {
-        if (!_isConnected)
+        while (_isConnected)
         {
-            ConnectToServer(serverIP, serverPort);
-        }
-        else
-        {
-            Heartbeat();
-            ReceivePacket();
+            try
+            {
+                await ReceivePacketAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Exception in ReceivePacketLoopAsync: {e}");
+                HandleDisconnect();
+            }
+            await Task.Delay(10); // 짧은 대기 후 재시도
         }
     }
 
-    public void ConnectToServer(string ipAddress, int port)
+    public async void CheckSocket()
+    {
+        await HeartbeatAsync();
+    }
+
+    public async Task ConnectToServerAsync(string ipAddress, int port)
     {
         try
         {
             _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _clientSocket.Connect(ipAddress, port);
+            await Task.Factory.FromAsync(_clientSocket.BeginConnect, _clientSocket.EndConnect, ipAddress, port, null);
             _isConnected = true;
             Debug.Log("Connected to server");
         }
         catch (Exception e)
         {
-            //Debug.Log("Failed to connect: " + e.Message);
             AlertManager.Instance.AlertPopup("서버 연결에 실패했습니다.");
-            Task.Delay(5000).ContinueWith(_ => ConnectToServer(ipAddress, port)); // 연결 실패 시 5초 후 재시도
+            await Task.Delay(5000); // 연결 실패 시 5초 후 재시도
+            await ConnectToServerAsync(ipAddress, port);
         }
     }
 
-    private void Heartbeat()
+    public async Task HeartbeatAsync()
     {
         float term = 1f;
 
         if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite) && (lastSendTime == 0f || lastRecvTime - lastSendTime > term))
         {
-            //byte[] data = Encoding.ASCII.GetBytes(message);
             C_CHAT pkt = new C_CHAT()
             {
                 Msg = "Ping"
@@ -119,74 +118,153 @@ public class ClientManager : Singleton<ClientManager>
 
             try
             {
-                //_clientSocket.Send(data);
-                SendPacket(PacketId.PKT_C_TEST, pkt.ToByteArray());
+                await SendPacket(PacketId.PKT_C_TEST, pkt.ToByteArray());
                 lastSendTime = Time.time;
             }
             catch (Exception e)
             {
-                //Debug.Log("Heartbeat failed: " + e.Message);
                 AlertManager.Instance.AlertPopup("서버와 연결이 끊어졌습니다.");
                 HandleDisconnect();
             }
         }
     }
 
-    public void ReceivePacket()
+    //public async Task ReceivePacketAsync()
+    //{
+    //    try
+    //    {
+    //        byte[] headerBuffer = new byte[4];
+    //        int headerBytesRead = await Task.Factory.FromAsync(
+    //            (callback, state) => _clientSocket.BeginReceive(headerBuffer, 0, headerBuffer.Length, SocketFlags.None, callback, state),
+    //            ar => _clientSocket.EndReceive(ar),
+    //            null
+    //        );
+
+    //        if (headerBytesRead != headerBuffer.Length)
+    //        {
+    //            Debug.LogWarning("Header incomplete.");
+    //            return;
+    //        }
+
+    //        ushort size = BitConverter.ToUInt16(headerBuffer, 0);
+    //        ushort id = BitConverter.ToUInt16(headerBuffer, 2);
+
+    //        byte[] dataBuffer = new byte[size - 4];
+    //        int dataBytesRead = await Task.Factory.FromAsync(
+    //            (callback, state) => _clientSocket.BeginReceive(dataBuffer, 0, dataBuffer.Length, SocketFlags.None, callback, state),
+    //            ar => _clientSocket.EndReceive(ar),
+    //            null
+    //        );
+
+    //        if (dataBytesRead == dataBuffer.Length)
+    //        {
+    //            Debug.Log($"Received Packet ID: {id}, Size: {size}");
+    //            ServerPacketHandler.Instance.ProcessReceivedPacket((PacketId)id, dataBuffer);
+    //        }
+    //        else
+    //        {
+    //            Debug.LogWarning("Data incomplete.");
+    //        }
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        Debug.LogError($"Exception in ReceivePacketAsync: {e}");
+    //        HandleDisconnect();
+    //    }
+    //}
+
+
+    public async Task ReceivePacketAsync()
     {
         try
         {
-            while (_clientSocket.Available > 0)
+            byte[] headerBuffer = new byte[4];
+            int headerBytesRead = await Task.Factory.FromAsync(
+                (callback, state) => _clientSocket.BeginReceive(headerBuffer, 0, headerBuffer.Length, SocketFlags.None, callback, state),
+                ar => _clientSocket.EndReceive(ar),
+                null
+            );
+
+            if (headerBytesRead != headerBuffer.Length)
             {
-                byte[] buffer = new byte[4096]; // 적절한 버퍼 크기로 설정합니다.
-                int bytesRead = _clientSocket.Receive(buffer);
+                Debug.LogWarning("Header incomplete.");
+                return;
+            }
 
-                if (bytesRead > 0)
+            ushort size = BitConverter.ToUInt16(headerBuffer, 0);
+            ushort id = BitConverter.ToUInt16(headerBuffer, 2);
+
+            byte[] dataBuffer = new byte[size - 4];
+            int dataBytesRead = await Task.Factory.FromAsync(
+                (callback, state) => _clientSocket.BeginReceive(dataBuffer, 0, dataBuffer.Length, SocketFlags.None, callback, state),
+                ar => _clientSocket.EndReceive(ar),
+                null
+            );
+
+            if (dataBytesRead == dataBuffer.Length)
+            {
+                MainThreadDispatcher.ExecuteOnMainThread(() =>
                 {
-                    // 수신된 데이터의 길이를 바이트 배열로 변환합니다.
-                    ArraySegment<byte> segment = new ArraySegment<byte>(buffer, 0, bytesRead);
-
-                    // 데이터가 충분한지 확인합니다 (헤더 4바이트 + 데이터)
-                    if (segment.Count >= 4)
-                    {
-                        // 1. 헤더 분석
-                        ushort size = BitConverter.ToUInt16(segment.Array, segment.Offset); // 리틀 엔디안
-                        ushort id = BitConverter.ToUInt16(segment.Array, segment.Offset + 2); // 리틀 엔디안
-
-                        // 2. 데이터 추출
-                        int dataSize = size - 4; // 데이터 크기 (헤더 크기 4바이트를 제외한 크기)
-                        if (segment.Count >= size)
-                        {
-                            byte[] data = new byte[dataSize];
-                            Buffer.BlockCopy(segment.Array, segment.Offset + 4, data, 0, dataSize);
-                            Debug.Log($"Received Packet ID: {id}, Size: {size}");
-
-                            // 데이터 처리
-                            ServerPacketHandler.Instance.ProcessReceivedPacket((PacketId)id, data);
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Received incomplete packet.");
-                            // 처리되지 않은 데이터가 있는 경우 적절한 처리를 추가합니다.
-                        }
-                    }
-                    else
-                    {
-                        AlertManager.Instance.AlertPopup("데이터 수신 실패.");
-                    }
-                }
+                    Debug.Log($"Received Packet ID: {id}, Size: {size}");
+                    ServerPacketHandler.Instance.ProcessReceivedPacket((PacketId)id, dataBuffer);
+                });
+            }
+            else
+            {
+                Debug.LogWarning("Data incomplete.");
             }
         }
         catch (Exception e)
         {
-            Debug.Log(_menuManager);
-            AlertManager.Instance.AlertPopup("데이터 수신 실패.");
-            //Debug.LogError("Failed to receive data: " + e.Message);
-            HandleDisconnect();
+            MainThreadDispatcher.ExecuteOnMainThread(() =>
+            {
+                Debug.LogError($"Exception in ReceivePacketAsync: {e}");
+                HandleDisconnect();
+            });
         }
     }
 
-    public void HandleDisconnect()
+
+
+    public async Task SendPacket(PacketId packetId, byte[] protobufData)
+    {
+        if (_isConnected)
+        {
+            try
+            {
+                ushort id = (ushort)packetId;
+                ushort size = (ushort)(protobufData.Length + 4);
+
+                byte[] header = new byte[4];
+                header[0] = (byte)(size & 0xFF);
+                header[1] = (byte)(size >> 8);
+                header[2] = (byte)(id & 0xFF);
+                header[3] = (byte)(id >> 8);
+
+                byte[] packet = new byte[header.Length + protobufData.Length];
+                Buffer.BlockCopy(header, 0, packet, 0, header.Length);
+                Buffer.BlockCopy(protobufData, 0, packet, header.Length, protobufData.Length);
+
+                await Task.Factory.FromAsync(
+                    (callback, state) => _clientSocket.BeginSend(packet, 0, packet.Length, SocketFlags.None, callback, state),
+                    ar => _clientSocket.EndSend(ar),
+                    null
+                );
+            }
+            catch (Exception e)
+            {
+                AlertManager.Instance.AlertPopup("데이터 송신 실패");
+                HandleDisconnect();
+            }
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        HandleDisconnect();
+    }
+
+    private void HandleDisconnect()
     {
         if (_isConnected)
         {
@@ -195,48 +273,6 @@ public class ClientManager : Singleton<ClientManager>
             _clientSocket.Close();
             Debug.Log("Disconnected from server");
         }
-    }
-
-    public void SendPacket(PacketId packetId, byte[] protobufData)
-    {
-        if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite))
-        {
-            try
-            {
-                // 1. 헤더 생성 (리틀 엔디안)
-                ushort id = (ushort)packetId;
-                ushort size = (ushort)(protobufData.Length + 4); // 데이터의 길이 + 헤더 길이
-
-                byte[] header = new byte[4];
-
-                // size (2바이트) - 리틀 엔디안 방식으로 변환
-                header[0] = (byte)(size & 0xFF); // 하위 바이트
-                header[1] = (byte)(size >> 8);   // 상위 바이트
-
-                // id (2바이트) - 리틀 엔디안 방식으로 변환
-                header[2] = (byte)(id & 0xFF);   // 하위 바이트
-                header[3] = (byte)(id >> 8);     // 상위 바이트
-
-                // 2. 헤더와 데이터 결합
-                byte[] packet = new byte[header.Length + protobufData.Length];
-                Buffer.BlockCopy(header, 0, packet, 0, header.Length);
-                Buffer.BlockCopy(protobufData, 0, packet, header.Length, protobufData.Length);
-
-                _clientSocket.Send(packet);
-            }
-            catch (Exception e)
-            {
-                AlertManager.Instance.AlertPopup("데이터 송신 실패");
-                //Debug.Log("Failed to send data: " + e.Message);
-                HandleDisconnect();
-            }
-        }
-    }
-
-    private void OnApplicationQuit()
-    {
-        // 애플리케이션 종료 시 연결 종료 처리
-        HandleDisconnect();
     }
 
     public bool IsConnected()

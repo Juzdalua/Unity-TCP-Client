@@ -54,13 +54,13 @@ public class PlayerManager : Singleton<PlayerManager>
                 // 기존 플레이어의 위치 업데이트
                 if (Vector2.Distance(_players[pkt.Players[i].Id].transform.position, new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY)) > 0.1f)
                 {
-                    //StartCoroutine(
-                    //    SmoothMove(
-                    //        _players[pkt.Players[i].Id].transform,
-                    //        new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY),
-                    //        _speed
-                    //    )
-                    //);
+                    StartCoroutine(
+                        SmoothMove(
+                            _players[pkt.Players[i].Id].transform,
+                            new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY),
+                            _speed
+                        )
+                    );
                 }
             }
         }
@@ -104,13 +104,13 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             if (Vector2.Distance(_players[recvPlayer.Id].transform.position, new Vector2(recvPlayer.PosX, recvPlayer.PosY)) > 0.1f)
             {
-                //StartCoroutine(
-                //    SmoothMove(
-                //        _players[recvPlayer.Id].transform,
-                //        new Vector2(recvPlayer.PosX, recvPlayer.PosY),
-                //        _speed
-                //    )
-                //);
+                StartCoroutine(
+                    SmoothMove(
+                        _players[recvPlayer.Id].transform,
+                        new Vector2(recvPlayer.PosX, recvPlayer.PosY),
+                        _speed
+                    )
+                );
             }
         }
     }

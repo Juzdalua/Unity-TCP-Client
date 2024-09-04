@@ -45,8 +45,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        GetDirInput();
-        UpdateMove();
+        if (playerId == PlayerManager.Instance.GetPlayerId())
+        {
+            GetDirInput();
+            UpdateMove();
+        }
     }
 
     void GetDirInput()
@@ -95,7 +98,7 @@ public class PlayerController : MonoBehaviour
         {
             if (dir == MoveDir.LEFT)
                 GetComponent<Player>().FlipX(true);
-            else if(dir == MoveDir.RIGHT)
+            else if (dir == MoveDir.RIGHT)
                 GetComponent<Player>().FlipX(false);
 
             transform.position += moveDir.normalized * speed * Time.deltaTime;
@@ -142,7 +145,7 @@ public class PlayerController : MonoBehaviour
                 posY = destPos.y;
             }
         }
-      
+
         CheckUpdatedFlag();
     }
 
@@ -150,7 +153,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_updated)
         {
-            //ClientPacketHandler.Instance.Move(PlayerManager.Instance.GetPlayerId(), posX, posY, dir);
+            ClientPacketHandler.Instance.Move(PlayerManager.Instance.GetPlayerId(), posX + 0.5f, posY + 0.5f, dir);
             _updated = false;
         }
     }
