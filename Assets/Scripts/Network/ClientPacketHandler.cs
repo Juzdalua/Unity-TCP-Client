@@ -35,7 +35,6 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         {
             Account = account,
         };
-        PlayerManager.Instance.SetPlayerName(id);
         byte[] data = loginPkt.ToByteArray();
         await ClientManager.Instance.SendPacket(PacketId.PKT_C_LOGIN, data);
     }
@@ -74,7 +73,6 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
             PosY = posY
         };
 
-        //Debug.Log($"({dir} / POSX: {posX}, POSY: {posY})");
         byte[] data = movePkt.ToByteArray();
         await ClientManager.Instance.SendPacket(PacketId.PKT_C_MOVE, data);
     }

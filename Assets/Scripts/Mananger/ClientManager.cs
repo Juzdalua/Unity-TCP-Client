@@ -14,6 +14,8 @@ public enum SceneType
 
 public enum PacketId
 {
+    PKT_S_SERVER_CHAT = 9999,
+
     PKT_C_TEST = 1000,
     PKT_S_TEST = 1001,
 

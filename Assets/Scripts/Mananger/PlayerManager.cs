@@ -26,8 +26,11 @@ public class PlayerManager : Singleton<PlayerManager>
         player.name = pkt.Player.Id.ToString();
         _players[pkt.Player.Id] = player;
 
-        if (playerId == PlayerManager.Instance.GetPlayerId())
-            SetPlayerCreateInfo(player);
+        // Player Set
+        player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetPlayerId());
+        player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetPlayerName());
+        player.GetComponent<Player>().SetPlayerNameUI(
+                    PlayerManager.Instance.GetPlayerName() == null ? "UNKNOWN" : PlayerManager.Instance.GetPlayerName() == "" ? "UNKNOWN" : PlayerManager.Instance.GetPlayerName());
 
         ClientPacketHandler.Instance.EnterGame(playerId);
     }
@@ -37,6 +40,10 @@ public class PlayerManager : Singleton<PlayerManager>
     {
         for (int i = 0; i < pkt.Players.Count; i++)
         {
+            Debug.Log($"ID: {pkt.Players[i].Id}");
+            if (pkt.Players[i].Id == PlayerManager.Instance.GetPlayerId())
+                continue;
+
             if (!_players.ContainsKey(pkt.Players[i].Id))
             {
                 GameObject prefab = playerPrefab;
@@ -46,21 +53,21 @@ public class PlayerManager : Singleton<PlayerManager>
                 player.name = pkt.Players[i].Id.ToString();
                 _players[pkt.Players[i].Id] = player;
 
-                if (pkt.Players[i].Id == PlayerManager.Instance.GetPlayerId())
-                    SetPlayerCreateInfo(player);
+                // Player Set
+                player.GetComponent<PlayerController>().SetPlayerId(pkt.Players[i].Id);
+                player.GetComponent<PlayerController>().SetPlayerName(pkt.Players[i].Name);
+                player.GetComponent<Player>().SetPlayerNameUI(
+                    pkt.Players[i].Name == null ? "UNKNOWN" : pkt.Players[i].Name == "" ? "UNKNOWN" : pkt.Players[i].Name);
             }
             else
             {
                 // 기존 플레이어의 위치 업데이트
                 if (Vector2.Distance(_players[pkt.Players[i].Id].transform.position, new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY)) > 0.1f)
                 {
-                    StartCoroutine(
-                        SmoothMove(
-                            _players[pkt.Players[i].Id].transform,
-                            new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY),
-                            _speed
-                        )
-                    );
+                    Transform currentTransform = _players[pkt.Players[i].Id].transform;
+                    Vector2 targetPosition = new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY);
+
+                    StartCoroutine(SmoothMove(currentTransform, targetPosition,_speed));
                 }
             }
         }
@@ -71,6 +78,10 @@ public class PlayerManager : Singleton<PlayerManager>
         if (transform.position.x > targetPosition.x)
         {
             transform.GetComponent<Player>().FlipX(true);
+        }
+        else if(transform.position.x < targetPosition.x)
+        {
+            transform.GetComponent<Player>().FlipX(false);
         }
 
         Vector2 startPosition = transform.position;
@@ -104,13 +115,10 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             if (Vector2.Distance(_players[recvPlayer.Id].transform.position, new Vector2(recvPlayer.PosX, recvPlayer.PosY)) > 0.1f)
             {
-                StartCoroutine(
-                    SmoothMove(
-                        _players[recvPlayer.Id].transform,
-                        new Vector2(recvPlayer.PosX, recvPlayer.PosY),
-                        _speed
-                    )
-                );
+                Transform currentTransform = _players[recvPlayer.Id].transform;
+                Vector2 targetPosition = new Vector2(recvPlayer.PosX, recvPlayer.PosY);
+
+                StartCoroutine(SmoothMove(currentTransform, targetPosition, _speed));
             }
         }
     }

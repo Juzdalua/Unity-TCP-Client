@@ -7,10 +7,21 @@ public class MapManager : Singleton<MapManager>
     [SerializeField] private Tilemap tilemap;
 
     [Header("Tilemap Boundary")]
-    [SerializeField] private int maxX = 8;
-    [SerializeField] private int minX = -9;
-    [SerializeField] private int maxY = 4;
-    [SerializeField] private int minY = -5;
+    // 1920*1080
+    //private int maxX = 8;
+    //private int minX = -9;
+
+    // 800*600
+    private int maxX = 5;
+    private int minX = -6;
+
+    private int maxY = 4;
+    private int minY = -5;
+
+    public void GetTilemapCurrentCellPos(Vector3 destPos)
+    {
+        Debug.Log(tilemap.WorldToCell(destPos));
+    }
 
     public bool CanGo(Vector3 destPos)
     {

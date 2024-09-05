@@ -136,6 +136,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 목표지점으로 이동하는데 장애물이 있는지 확인
+        //MapManager.Instance.GetTilemapCurrentCellPos(destPos);
         if (MapManager.Instance.CanGo(destPos))
         {
             if (PlayerManager.Instance.CanGo(destPos))

@@ -1,4 +1,5 @@
 using Google.Protobuf.Protocol;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,9 +7,37 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 {
     public void ProcessReceivedPacket(PacketId id, byte[] data)
     {
-        Debug.Log($"ProcessReceivedPacket: {id} / {data}");
         switch (id)
         {
+            case PacketId.PKT_S_SERVER_CHAT:
+                S_SERVER_CHAT serverChatPkt = S_SERVER_CHAT.Parser.ParseFrom(data);
+
+                string message = serverChatPkt.Msg.ToString();
+                //string message1 = serverChatPkt.Msg.ToStringUtf8();
+                //string message2 = Encoding.UTF8.GetString(serverChatPkt.Msg.ToByteArray());
+                
+                Debug.Log(message);
+                //Debug.Log(message1);
+                //Debug.Log(message2);
+
+                S_CHAT toChatPkt = new S_CHAT()
+                {
+                    Type = serverChatPkt.Type,
+                    Msg = message
+                };
+
+                ChattingManager.Instance.ProcessChatFromServer(toChatPkt);
+                //if (movePkt.Player != null)
+                //{
+                //    PlayerManager.Instance.MoveUpdatePlayer(movePkt.Player);
+                //}
+                //else
+                //{
+                //    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                //    Debug.Log($"Error Code: CHAT");
+                //}
+                break;
+
             case PacketId.PKT_S_TEST:
                 S_CHAT chat = S_CHAT.Parser.ParseFrom(data);
                 Debug.Log($"Received chat message: PlayerId={chat.PlayerId}, Msg={chat.Msg}");
@@ -32,12 +61,12 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 if (login.Success)
                 {
                     PlayerManager.Instance.SetPlayerId(login.Player.Id);
+                    PlayerManager.Instance.SetPlayerName(login.Player.Name);
 
                     //Scene ÀüÈ¯
                     ClientManager.Instance.SetSceneType(SceneType.Game);
                     MainMenuManager.Instance.ActiveMenu();
                     SceneManager.LoadScene("01.MainScene");
-                    //GameManager.Instance.loginPkt = login;
                     GameManager.loginPkt = login;
                 }
                 else

@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AlertManager : Singleton<AlertManager>
 {
@@ -8,6 +9,24 @@ public class AlertManager : Singleton<AlertManager>
     private float fadeDuration = 2.0f; // 페이드아웃 지속 시간
     private bool isFadingOut = false;
     private float fadeOutTimer = 0f;
+
+    string currentSceneName;
+
+    private void Start()
+    {
+        currentSceneName = SceneManager.GetActiveScene().name;
+    }
+
+    private void Update()
+    {
+
+        if(currentSceneName != SceneManager.GetActiveScene().name)
+        {
+            currentSceneName = SceneManager.GetActiveScene().name;
+            StopAllCoroutines();
+            SetAlertPopup();
+        }
+    }
 
     public void AlertPopup(string msg)
     {
@@ -39,8 +58,8 @@ public class AlertManager : Singleton<AlertManager>
     }
     public void SetAlertPopup()
     {
-        alertPopup.SetActive(false);
         alertPopup.GetComponent<CanvasGroup>().alpha = 0;
         alertPopup.GetComponentInChildren<TextMeshProUGUI>().text = "";
+        alertPopup.SetActive(false);
     }
 }
