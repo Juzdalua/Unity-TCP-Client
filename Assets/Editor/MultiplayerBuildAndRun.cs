@@ -46,9 +46,6 @@ public class MultiplayerBuildAndRun
                 path,
                 BuildTarget.StandaloneWindows64,
                 BuildOptions.Development | BuildOptions.ShowBuiltPlayer);
-
-            // 창모드로 실행되도록 명령줄 인수 추가
-            System.Diagnostics.Process.Start(path, "-screen-fullscreen 0 -screen-width 800 -screen-height 600");
         }
     }
 

@@ -116,6 +116,20 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 }
                 break;
 
+            case PacketId.PKT_S_SHOT:
+                S_SHOT shotPkt = S_SHOT.Parser.ParseFrom(data);
+                //TODO
+                if (shotPkt.PlayerId != 0)
+                {
+                    PlayerManager.Instance.ShotUpdate(shotPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: SHOT");
+                }
+                break;
+
             default:
                 AlertManager.Instance.AlertPopup("잘못된 정보");
                 Debug.Log($"Unknown packet id: {id}");

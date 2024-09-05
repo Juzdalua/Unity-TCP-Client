@@ -7,35 +7,82 @@ option csharp_namespace = "Google.Protobuf.Protocol";
 
 import "google/protobuf/timestamp.proto";
 
-enum LoginType
+enum ToPlayer
 {
-	LOGIN_TYPE_NONE = 0; // enum은 항상 0부터 시작해야한다. 보통 NONE
-	LOGIN_TYPE_LOGIN = 1;
-	LOGIN_TYPE_SIGNUP = 2;
+	TO_PLAYER_NONE = 0;
+	TO_PLAYER_OWNER = 1;
+	TO_PLAYER_ALL = 2;
+}
+
+enum ChatType
+{
+	CHAT_TYPE_NONE = 0;
+	CHAT_TYPE_NORMAL = 1;
+	CHAT_TYPE_PARTY = 2;
+	CHAT_TYPE_GUILD = 3;
+	CHAT_TYPE_WHISPER = 4;
+	CHAT_TYPE_SYSTEM = 5;
+}
+
+message ErrorObj
+{
+	int64 errorCode = 1;
+	string errorMsg = 2;
 }
 
 message Account
 {
 	uint64 id = 1;
-	string password = 2;
+	string name = 2;
+	string password = 3;
 }
 
 message Player
 {
 	uint64 id = 1;
-	string name = 2;
+	uint64 accountId = 2;
+	string name = 3;
+	float posX = 4;
+	float posY = 5;
+	float maxHP = 6;
+	float currentHP = 7;
+}
+
+enum MoveDir
+{
+	UP = 0;
+	DOWN = 1;
+	LEFT = 2;
+	RIGHT = 3;
+}
+
+message S_SERVER_CHAT
+{
+	ChatType type = 1;
+	string msg = 2;
+}
+
+message C_SIGNUP
+{
+	Account account = 1;
+}
+
+message S_SIGNUP
+{
+	bool success = 1;
+	ErrorObj error = 2;
 }
 
 message C_LOGIN
 {
-	LoginType type = 1;
-	Account account = 2;
+	Account account = 1;
 }
 
 message S_LOGIN
 {
 	bool success = 1;
 	Player player = 2;
+	ErrorObj error = 3;
 }
 
 message C_ENTER_GAME
@@ -45,16 +92,55 @@ message C_ENTER_GAME
 
 message S_ENTER_GAME
 {
-	bool success = 1;
+	ToPlayer toPlayer = 1;
+	bool success = 2;
+	repeated Player players = 3;
 }
 
 message C_CHAT
 {
-	string msg = 1;
+	ChatType type = 1;
+	uint64 playerId = 2;
+	string playerName = 3;
+	string msg = 4;
 }
 
 message S_CHAT
 {
+	ChatType type = 1;
+	uint64 playerId = 2;
+	string playerName = 3;
+	string msg = 4;
+}
+
+message C_MOVE
+{
 	uint64 playerId = 1;
-	string msg = 2;
+	float posX = 2;
+	float posY = 3;
+	MoveDir dir = 4;
+}
+
+message S_MOVE
+{
+	Player player = 1;
+	MoveDir dir = 2;
+}
+
+message C_SHOT
+{
+	uint64 playerId = 1;
+	float spawnPosX = 2;
+	float spawnPosY = 3;
+	float targetPosX = 4;
+	float targetPosY = 5;
+}
+
+message S_SHOT
+{
+	uint64 playerId = 1;
+	float spawnPosX = 2;
+	float spawnPosY = 3;
+	float targetPosX = 4;
+	float targetPosY = 5;
 }

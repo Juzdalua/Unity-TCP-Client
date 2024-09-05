@@ -123,6 +123,22 @@ public class PlayerManager : Singleton<PlayerManager>
         }
     }
 
+    public void ShotUpdate(S_SHOT pkt)
+    {
+        GameObject player = _players[pkt.PlayerId];
+        WeaponController _weaponController = player.GetComponent<WeaponController>();
+
+        GameObject bullet = Instantiate(_weaponController.bulletPrefab, _weaponController.bulletPoolComponent);
+        bullet.transform.position = player.GetComponent<Player>().IsStanceLeft() ? _weaponController. bulletLeftPos.position : _weaponController.bulletRightPos.position;
+        if (player.GetComponent<Player>().IsStanceLeft())
+            bullet.GetComponent<SpriteRenderer>().flipY = true;
+
+        Vector3 targetPos = player.GetComponent<Player>().IsStanceLeft() ? Vector2.left : Vector2.right;
+        targetPos = targetPos.normalized;
+
+        bullet.GetComponent<Bullet>().Init(targetPos, targetPos.x < 0 ? _weaponController.bulletLeftPos.position : _weaponController.bulletRightPos.position);
+    }
+
     // 플레이어 제거 (필요시)
     public void RemovePlayer(ulong playerId)
     {

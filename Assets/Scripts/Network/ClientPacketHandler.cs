@@ -76,4 +76,19 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         byte[] data = movePkt.ToByteArray();
         await ClientManager.Instance.SendPacket(PacketId.PKT_C_MOVE, data);
     }
+
+    public async void Shot(ulong playerId, Vector2 spawnPos, Vector3 target)
+    {
+        C_SHOT shotPkt = new C_SHOT()
+        {
+            PlayerId = playerId,
+            SpawnPosX = spawnPos.x,
+            SpawnPosY = spawnPos.y,
+            TargetPosX = target.x,
+            TargetPosY = target.y
+        };
+
+        byte[] data = shotPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(PacketId.PKT_C_SHOT, data);
+    }
 }

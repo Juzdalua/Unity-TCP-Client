@@ -33,6 +33,9 @@ public enum PacketId
 
     PKT_C_MOVE = 1010,
     PKT_S_MOVE = 1011,
+
+    PKT_C_SHOT = 1012,
+    PKT_S_SHOT = 1013,
 };
 
 public class ClientManager : Singleton<ClientManager>

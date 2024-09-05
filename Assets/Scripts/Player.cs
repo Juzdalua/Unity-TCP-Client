@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+
 public class Player : MonoBehaviour
 {
     [Header("UI")]
@@ -36,5 +37,10 @@ public class Player : MonoBehaviour
     public void SetPlayerNameUI(string name)
     {
         playerNameTMP.text = name;
+    }
+
+    public bool IsStanceLeft()
+    {
+        return _sprite.flipX;
     }
 }
