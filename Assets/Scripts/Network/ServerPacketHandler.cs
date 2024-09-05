@@ -130,6 +130,20 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 }
                 break;
 
+            case PacketId.PKT_S_HIT:
+                S_HIT hitPkt = S_HIT.Parser.ParseFrom(data);
+                //TODO
+                if (hitPkt.PlayerId != 0)
+                {
+                    PlayerManager.Instance.HitBulletUpdate(hitPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: SHOT");
+                }
+                break;
+
             default:
                 AlertManager.Instance.AlertPopup("잘못된 정보");
                 Debug.Log($"Unknown packet id: {id}");

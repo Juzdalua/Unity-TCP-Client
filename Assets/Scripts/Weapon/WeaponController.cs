@@ -19,7 +19,7 @@ public class WeaponController : MonoBehaviour
 
     void Shot()
     {
-        if(PlayerManager.Instance.GetPlayerId() == GetComponent<PlayerController>().GetPlayerId())
+        if(PlayerManager.Instance.GetMyPlayerId() == GetComponent<PlayerController>().GetPlayerId())
         {
             if (lastShotTime != 0 && Time.time - lastShotTime < shotTerm)
                 return;
@@ -31,7 +31,7 @@ public class WeaponController : MonoBehaviour
                 
                 lastShotTime = Time.time;
 
-                ClientPacketHandler.Instance.Shot(PlayerManager.Instance.GetPlayerId(), GetComponent<Player>().IsStanceLeft() ? bulletLeftPos.position : bulletRightPos.position.normalized, targetPos);
+                ClientPacketHandler.Instance.Shot(PlayerManager.Instance.GetMyPlayerId(), GetComponent<Player>().IsStanceLeft() ? bulletLeftPos.position : bulletRightPos.position.normalized, targetPos);
             }
 
             //if (Input.GetKeyDown(KeyCode.Space))
@@ -47,7 +47,7 @@ public class WeaponController : MonoBehaviour
             //    bullet.GetComponent<Bullet>().Init(targetPos, targetPos.x < 0 ? bulletLeftPos.position : bulletRightPos.position);
             //    lastShotTime = Time.time;
 
-            //    ClientPacketHandler.Instance.Shot(PlayerManager.Instance.GetPlayerId(), GetComponent<Player>().IsStanceLeft() ? bulletLeftPos.position : bulletRightPos.position.normalized, targetPos);
+            //    ClientPacketHandler.Instance.Shot(PlayerManager.Instance.GetMyPlayerId(), GetComponent<Player>().IsStanceLeft() ? bulletLeftPos.position : bulletRightPos.position.normalized, targetPos);
             //}
         }
     }

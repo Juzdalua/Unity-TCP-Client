@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (playerId == PlayerManager.Instance.GetPlayerId())
+        if (playerId == PlayerManager.Instance.GetMyPlayerId())
         {
             GetDirInput();
             UpdateMove();
@@ -154,7 +154,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_updated)
         {
-            ClientPacketHandler.Instance.Move(PlayerManager.Instance.GetPlayerId(), posX + 0.5f, posY + 0.5f, dir);
+            ClientPacketHandler.Instance.Move(PlayerManager.Instance.GetMyPlayerId(), posX + 0.5f, posY + 0.5f, dir);
             _updated = false;
         }
     }
@@ -178,5 +178,14 @@ public class PlayerController : MonoBehaviour
     public string GetPlayerName()
     {
         return playerName;
+    }
+
+    // Hit Bullet
+    public void HitBullet(ulong hitPlayerId, float damage)
+    {
+        if (PlayerManager.Instance.GetMyPlayerId() == hitPlayerId)
+        {
+            ClientPacketHandler.Instance.HitBullet(PlayerManager.Instance.GetMyPlayerId(), damage);
+        }
     }
 }

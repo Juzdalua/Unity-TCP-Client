@@ -27,10 +27,10 @@ public class PlayerManager : Singleton<PlayerManager>
         _players[pkt.Player.Id] = player;
 
         // Player Set
-        player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetPlayerId());
-        player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetPlayerName());
+        player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetMyPlayerId());
+        player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetMyPlayerName());
         player.GetComponent<Player>().SetPlayerNameUI(
-                    PlayerManager.Instance.GetPlayerName() == null ? "UNKNOWN" : PlayerManager.Instance.GetPlayerName() == "" ? "UNKNOWN" : PlayerManager.Instance.GetPlayerName());
+                    PlayerManager.Instance.GetMyPlayerName() == null ? "UNKNOWN" : PlayerManager.Instance.GetMyPlayerName() == "" ? "UNKNOWN" : PlayerManager.Instance.GetMyPlayerName());
 
         ClientPacketHandler.Instance.EnterGame(playerId);
     }
@@ -41,7 +41,7 @@ public class PlayerManager : Singleton<PlayerManager>
         for (int i = 0; i < pkt.Players.Count; i++)
         {
             Debug.Log($"ID: {pkt.Players[i].Id}");
-            if (pkt.Players[i].Id == PlayerManager.Instance.GetPlayerId())
+            if (pkt.Players[i].Id == PlayerManager.Instance.GetMyPlayerId())
                 continue;
 
             if (!_players.ContainsKey(pkt.Players[i].Id))
@@ -123,12 +123,16 @@ public class PlayerManager : Singleton<PlayerManager>
         }
     }
 
+    // Shot Bullet
     public void ShotUpdate(S_SHOT pkt)
     {
         GameObject player = _players[pkt.PlayerId];
         WeaponController _weaponController = player.GetComponent<WeaponController>();
 
         GameObject bullet = Instantiate(_weaponController.bulletPrefab, _weaponController.bulletPoolComponent);
+        
+        bullet.GetComponent<Bullet>().SetShotPlayerId(pkt.PlayerId);
+
         bullet.transform.position = player.GetComponent<Player>().IsStanceLeft() ? _weaponController. bulletLeftPos.position : _weaponController.bulletRightPos.position;
         if (player.GetComponent<Player>().IsStanceLeft())
             bullet.GetComponent<SpriteRenderer>().flipY = true;
@@ -137,6 +141,34 @@ public class PlayerManager : Singleton<PlayerManager>
         targetPos = targetPos.normalized;
 
         bullet.GetComponent<Bullet>().Init(targetPos, targetPos.x < 0 ? _weaponController.bulletLeftPos.position : _weaponController.bulletRightPos.position);
+    }
+
+    // Hit Bullet
+    public void HitBulletUpdate(S_HIT pkt)
+    {
+        GameObject player = _players[pkt.PlayerId];
+        StartCoroutine(OnDamage(player, pkt));
+
+        // TODO player HPBar
+    }
+
+    IEnumerator OnDamage(GameObject player, S_HIT pkt)
+    {
+        //player.GetComponent<SpriteRenderer>().color = Color.black;
+        player.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0);
+        yield return new WaitForSeconds(0.1f);
+
+        if(pkt.State == Google.Protobuf.Protocol.PlayerState.Dead)
+        {
+            //player.GetComponent<SpriteRenderer>().color = Color.white;
+            player.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+            // TODO Dead
+        } 
+        else
+        {
+            //player.GetComponent<SpriteRenderer>().color = Color.white;
+            player.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+        }
     }
 
     // 플레이어 제거 (필요시)
@@ -155,7 +187,7 @@ public class PlayerManager : Singleton<PlayerManager>
         _playerId = playerId;
     }
 
-    public ulong GetPlayerId()
+    public ulong GetMyPlayerId()
     {
         return _playerId;
     }
@@ -164,7 +196,7 @@ public class PlayerManager : Singleton<PlayerManager>
         _playerName = playerName;
     }
 
-    public string GetPlayerName()
+    public string GetMyPlayerName()
     {
         return _playerName;
     }
@@ -176,10 +208,10 @@ public class PlayerManager : Singleton<PlayerManager>
 
     public void SetPlayerCreateInfo(GameObject player)
     {
-        player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetPlayerId());
-        player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetPlayerName());
+        player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetMyPlayerId());
+        player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetMyPlayerName());
         player.GetComponentInChildren<TextMeshProUGUI>().text =
-            PlayerManager.Instance.GetPlayerName() ?? "UNKNOWN";
+            PlayerManager.Instance.GetMyPlayerName() ?? "UNKNOWN";
     }
 
     public bool CanGo(Vector3 destPos)

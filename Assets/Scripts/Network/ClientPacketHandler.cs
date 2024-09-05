@@ -17,8 +17,9 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         {
             Account = account,
         };
+        PacketId packetId = PacketId.PKT_C_SIGNUP;
         byte[] data = signupPkt.ToByteArray();
-        await ClientManager.Instance.SendPacket(PacketId.PKT_C_SIGNUP, data);
+        await ClientManager.Instance.SendPacket(packetId, data);
     }
 
     public async void Login(string id, string pwd)
@@ -35,8 +36,9 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         {
             Account = account,
         };
+        PacketId packetId = PacketId.PKT_C_LOGIN;
         byte[] data = loginPkt.ToByteArray();
-        await ClientManager.Instance.SendPacket(PacketId.PKT_C_LOGIN, data);
+        await ClientManager.Instance.SendPacket(packetId, data);
     }
 
     public async void EnterGame(ulong playerId)
@@ -45,9 +47,9 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         {
             PlayerId = playerId
         };
-
+        PacketId packetId = PacketId.PKT_C_ENTER_GAME;
         byte[] data = enterPkt.ToByteArray();
-        await ClientManager.Instance.SendPacket(PacketId.PKT_C_ENTER_GAME, data);
+        await ClientManager.Instance.SendPacket(packetId, data);
     }
 
     public async void Chat(Google.Protobuf.Protocol.ChatType _type, string text)
@@ -55,13 +57,13 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         C_CHAT chatPkt = new C_CHAT()
         {
             Type = _type,
-            PlayerId = PlayerManager.Instance.GetPlayerId(),
-            PlayerName = PlayerManager.Instance.GetPlayerName(),
+            PlayerId = PlayerManager.Instance.GetMyPlayerId(),
+            PlayerName = PlayerManager.Instance.GetMyPlayerName(),
             Msg = text,
         };
-
+        PacketId packetId = PacketId.PKT_C_CHAT;
         byte[] data = chatPkt.ToByteArray();
-        await ClientManager.Instance.SendPacket(PacketId.PKT_C_CHAT, data);
+        await ClientManager.Instance.SendPacket(packetId, data);
     }
 
     public async void Move(ulong playerId, float posX, float posY, MoveDir dir)
@@ -72,9 +74,9 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
             PosX = posX,
             PosY = posY
         };
-
+        PacketId packetId = PacketId.PKT_C_MOVE;
         byte[] data = movePkt.ToByteArray();
-        await ClientManager.Instance.SendPacket(PacketId.PKT_C_MOVE, data);
+        await ClientManager.Instance.SendPacket(packetId, data);
     }
 
     public async void Shot(ulong playerId, Vector2 spawnPos, Vector3 target)
@@ -87,8 +89,20 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
             TargetPosX = target.x,
             TargetPosY = target.y
         };
-
+        PacketId packetId = PacketId.PKT_C_SHOT;
         byte[] data = shotPkt.ToByteArray();
-        await ClientManager.Instance.SendPacket(PacketId.PKT_C_SHOT, data);
+        await ClientManager.Instance.SendPacket(packetId, data);
+    }
+
+    public async void HitBullet(ulong playerId, float damage)
+    {
+        C_HIT hitPkt = new C_HIT()
+        {
+            PlayerId = playerId,
+            Damage = damage
+        };
+        PacketId packetId = PacketId.PKT_C_HIT;
+        byte[] data = hitPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
     }
 }

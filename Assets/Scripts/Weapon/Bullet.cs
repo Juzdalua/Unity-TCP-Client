@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
     public float damage = 1;
     public float speed = 5;
     Vector2 currentPos;
+    private ulong shotPlayerId;
 
     private void Awake()
     {
@@ -16,7 +17,7 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
-        if(Vector2.Distance(transform.position, currentPos) >= 1f)
+        if (Vector2.Distance(transform.position, currentPos) >= 1f)
         {
             DestroyBullet();
         }
@@ -33,6 +34,11 @@ public class Bullet : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             DestroyBullet();
+            ulong hitPlayerId = collision.gameObject.GetComponent<PlayerController>().GetPlayerId();
+            if (shotPlayerId != hitPlayerId)
+            {
+                collision.gameObject.GetComponent<PlayerController>().HitBullet(hitPlayerId, damage);
+            }
         }
     }
 
@@ -40,6 +46,16 @@ public class Bullet : MonoBehaviour
     {
         _rb.velocity = Vector2.zero;
         gameObject.SetActive(false);
-        GameObject.Destroy(this);
+        Destroy(gameObject);
+    }
+
+    public void SetShotPlayerId(ulong playerId)
+    {
+        shotPlayerId = playerId;
+    }
+
+    public ulong GetShotPlayerId()
+    {
+        return shotPlayerId;
     }
 }
