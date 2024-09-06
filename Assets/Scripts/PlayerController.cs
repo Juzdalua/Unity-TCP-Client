@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _targetPosition = _rb.position;
         _state = PlayerState.IDLE;
-        cellPos = new Vector3Int(0, 0, 0);
+        cellPos = Vector3Int.FloorToInt(new Vector3(transform.position.x, transform.position.y, 0));
     }
 
     void Update()
@@ -112,12 +112,11 @@ public class PlayerController : MonoBehaviour
         if (_moveKeyPressed == false)
         {
             _state = PlayerState.IDLE;
-            CheckUpdatedFlag();
+            //CheckUpdatedFlag();
             return;
         }
 
         Vector3Int destPos = cellPos;
-        _updated = true;
 
         switch (dir)
         {
@@ -136,7 +135,6 @@ public class PlayerController : MonoBehaviour
         }
 
         // 목표지점으로 이동하는데 장애물이 있는지 확인
-        //MapManager.Instance.GetTilemapCurrentCellPos(destPos);
         if (MapManager.Instance.CanGo(destPos))
         {
             if (PlayerManager.Instance.CanGo(destPos))
@@ -144,6 +142,7 @@ public class PlayerController : MonoBehaviour
                 cellPos = destPos;
                 posX = destPos.x;
                 posY = destPos.y;
+                _updated = true;
             }
         }
 
@@ -181,7 +180,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Hit Bullet
-    public void HitBullet(ulong hitPlayerId, float damage)
+    public void HitBullet(ulong hitPlayerId, ulong damage)
     {
         if (PlayerManager.Instance.GetMyPlayerId() == hitPlayerId)
         {

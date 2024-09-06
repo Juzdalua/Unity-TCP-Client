@@ -23,6 +23,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
         GameObject prefab = playerPrefab;
         GameObject player = Instantiate(prefab, new Vector2(pkt.Player.PosX, pkt.Player.PosY), Quaternion.identity);
+
         player.name = pkt.Player.Id.ToString();
         _players[pkt.Player.Id] = player;
 
@@ -40,8 +41,7 @@ public class PlayerManager : Singleton<PlayerManager>
     {
         for (int i = 0; i < pkt.Players.Count; i++)
         {
-            Debug.Log($"ID: {pkt.Players[i].Id}");
-            if (pkt.Players[i].Id == PlayerManager.Instance.GetMyPlayerId())
+            if (pkt.Players[i].Id == 0 || pkt.Players[i].Id == PlayerManager.Instance.GetMyPlayerId())
                 continue;
 
             if (!_players.ContainsKey(pkt.Players[i].Id))
@@ -50,6 +50,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
                 // 새로운 플레이어 생성
                 GameObject player = Instantiate(prefab, new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY), Quaternion.identity);
+
                 player.name = pkt.Players[i].Id.ToString();
                 _players[pkt.Players[i].Id] = player;
 
@@ -67,7 +68,7 @@ public class PlayerManager : Singleton<PlayerManager>
                     Transform currentTransform = _players[pkt.Players[i].Id].transform;
                     Vector2 targetPosition = new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY);
 
-                    StartCoroutine(SmoothMove(currentTransform, targetPosition,_speed));
+                    StartCoroutine(SmoothMove(currentTransform, targetPosition, _speed));
                 }
             }
         }
@@ -79,7 +80,7 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             transform.GetComponent<Player>().FlipX(true);
         }
-        else if(transform.position.x < targetPosition.x)
+        else if (transform.position.x < targetPosition.x)
         {
             transform.GetComponent<Player>().FlipX(false);
         }
@@ -130,10 +131,10 @@ public class PlayerManager : Singleton<PlayerManager>
         WeaponController _weaponController = player.GetComponent<WeaponController>();
 
         GameObject bullet = Instantiate(_weaponController.bulletPrefab, _weaponController.bulletPoolComponent);
-        
+
         bullet.GetComponent<Bullet>().SetShotPlayerId(pkt.PlayerId);
 
-        bullet.transform.position = player.GetComponent<Player>().IsStanceLeft() ? _weaponController. bulletLeftPos.position : _weaponController.bulletRightPos.position;
+        bullet.transform.position = player.GetComponent<Player>().IsStanceLeft() ? _weaponController.bulletLeftPos.position : _weaponController.bulletRightPos.position;
         if (player.GetComponent<Player>().IsStanceLeft())
             bullet.GetComponent<SpriteRenderer>().flipY = true;
 
@@ -158,12 +159,12 @@ public class PlayerManager : Singleton<PlayerManager>
         player.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0);
         yield return new WaitForSeconds(0.1f);
 
-        if(pkt.State == Google.Protobuf.Protocol.PlayerState.Dead)
+        if (pkt.State == Google.Protobuf.Protocol.PlayerState.Dead)
         {
             //player.GetComponent<SpriteRenderer>().color = Color.white;
             player.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
             // TODO Dead
-        } 
+        }
         else
         {
             //player.GetComponent<SpriteRenderer>().color = Color.white;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     Rigidbody2D _rb;
-    public float damage = 1;
+    public ulong damage = 1;
     public float speed = 5;
     Vector2 currentPos;
     private ulong shotPlayerId;

@@ -94,7 +94,7 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void HitBullet(ulong playerId, float damage)
+    public async void HitBullet(ulong playerId, ulong damage)
     {
         C_HIT hitPkt = new C_HIT()
         {

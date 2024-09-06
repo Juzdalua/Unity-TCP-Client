@@ -29,8 +29,8 @@ namespace Google.Protobuf.Protocol {
             "EhAKCGVycm9yTXNnGAIgASgJIjUKB0FjY291bnQSCgoCaWQYASABKAQSDAoE",
             "bmFtZRgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSJzCgZQbGF5ZXISCgoCaWQY",
             "ASABKAQSEQoJYWNjb3VudElkGAIgASgEEgwKBG5hbWUYAyABKAkSDAoEcG9z",
-            "WBgEIAEoAhIMCgRwb3NZGAUgASgCEg0KBW1heEhQGAYgASgCEhEKCWN1cnJl",
-            "bnRIUBgHIAEoAiI+Cg1TX1NFUlZFUl9DSEFUEiAKBHR5cGUYASABKA4yEi5Q",
+            "WBgEIAEoAhIMCgRwb3NZGAUgASgCEg0KBW1heEhQGAYgASgEEhEKCWN1cnJl",
+            "bnRIUBgHIAEoBCI+Cg1TX1NFUlZFUl9DSEFUEiAKBHR5cGUYASABKA4yEi5Q",
             "cm90b2NvbC5DaGF0VHlwZRILCgNtc2cYAiABKAkiLgoIQ19TSUdOVVASIgoH",
             "YWNjb3VudBgBIAEoCzIRLlByb3RvY29sLkFjY291bnQiPgoIU19TSUdOVVAS",
             "DwoHc3VjY2VzcxgBIAEoCBIhCgVlcnJvchgCIAEoCzISLlByb3RvY29sLkVy",
@@ -53,7 +53,7 @@ namespace Google.Protobuf.Protocol {
             "UG9zWBgEIAEoAhISCgp0YXJnZXRQb3NZGAUgASgCImgKBlNfU0hPVBIQCghw",
             "bGF5ZXJJZBgBIAEoBBIRCglzcGF3blBvc1gYAiABKAISEQoJc3Bhd25Qb3NZ",
             "GAMgASgCEhIKCnRhcmdldFBvc1gYBCABKAISEgoKdGFyZ2V0UG9zWRgFIAEo",
-            "AiIpCgVDX0hJVBIQCghwbGF5ZXJJZBgBIAEoBBIOCgZkYW1hZ2UYAiABKAIi",
+            "AiIpCgVDX0hJVBIQCghwbGF5ZXJJZBgBIAEoBBIOCgZkYW1hZ2UYAiABKAQi",
             "UgoFU19ISVQSEAoIcGxheWVySWQYASABKAQSEQoJY3VycmVudEhQGAIgASgE",
             "EiQKBXN0YXRlGAMgASgOMhUuUHJvdG9jb2wuUGxheWVyU3RhdGUqRgoIVG9Q",
             "bGF5ZXISEgoOVE9fUExBWUVSX05PTkUQABITCg9UT19QTEFZRVJfT1dORVIQ",
@@ -724,10 +724,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "maxHP" field.</summary>
     public const int MaxHPFieldNumber = 6;
-    private float maxHP_;
+    private ulong maxHP_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float MaxHP {
+    public ulong MaxHP {
       get { return maxHP_; }
       set {
         maxHP_ = value;
@@ -736,10 +736,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "currentHP" field.</summary>
     public const int CurrentHPFieldNumber = 7;
-    private float currentHP_;
+    private ulong currentHP_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float CurrentHP {
+    public ulong CurrentHP {
       get { return currentHP_; }
       set {
         currentHP_ = value;
@@ -766,8 +766,8 @@ namespace Google.Protobuf.Protocol {
       if (Name != other.Name) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosX, other.PosX)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PosY, other.PosY)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(MaxHP, other.MaxHP)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(CurrentHP, other.CurrentHP)) return false;
+      if (MaxHP != other.MaxHP) return false;
+      if (CurrentHP != other.CurrentHP) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -780,8 +780,8 @@ namespace Google.Protobuf.Protocol {
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (PosX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosX);
       if (PosY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PosY);
-      if (MaxHP != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(MaxHP);
-      if (CurrentHP != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(CurrentHP);
+      if (MaxHP != 0UL) hash ^= MaxHP.GetHashCode();
+      if (CurrentHP != 0UL) hash ^= CurrentHP.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -820,13 +820,13 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(45);
         output.WriteFloat(PosY);
       }
-      if (MaxHP != 0F) {
-        output.WriteRawTag(53);
-        output.WriteFloat(MaxHP);
+      if (MaxHP != 0UL) {
+        output.WriteRawTag(48);
+        output.WriteUInt64(MaxHP);
       }
-      if (CurrentHP != 0F) {
-        output.WriteRawTag(61);
-        output.WriteFloat(CurrentHP);
+      if (CurrentHP != 0UL) {
+        output.WriteRawTag(56);
+        output.WriteUInt64(CurrentHP);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -858,13 +858,13 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(45);
         output.WriteFloat(PosY);
       }
-      if (MaxHP != 0F) {
-        output.WriteRawTag(53);
-        output.WriteFloat(MaxHP);
+      if (MaxHP != 0UL) {
+        output.WriteRawTag(48);
+        output.WriteUInt64(MaxHP);
       }
-      if (CurrentHP != 0F) {
-        output.WriteRawTag(61);
-        output.WriteFloat(CurrentHP);
+      if (CurrentHP != 0UL) {
+        output.WriteRawTag(56);
+        output.WriteUInt64(CurrentHP);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -891,11 +891,11 @@ namespace Google.Protobuf.Protocol {
       if (PosY != 0F) {
         size += 1 + 4;
       }
-      if (MaxHP != 0F) {
-        size += 1 + 4;
+      if (MaxHP != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(MaxHP);
       }
-      if (CurrentHP != 0F) {
-        size += 1 + 4;
+      if (CurrentHP != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(CurrentHP);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -924,10 +924,10 @@ namespace Google.Protobuf.Protocol {
       if (other.PosY != 0F) {
         PosY = other.PosY;
       }
-      if (other.MaxHP != 0F) {
+      if (other.MaxHP != 0UL) {
         MaxHP = other.MaxHP;
       }
-      if (other.CurrentHP != 0F) {
+      if (other.CurrentHP != 0UL) {
         CurrentHP = other.CurrentHP;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -965,12 +965,12 @@ namespace Google.Protobuf.Protocol {
             PosY = input.ReadFloat();
             break;
           }
-          case 53: {
-            MaxHP = input.ReadFloat();
+          case 48: {
+            MaxHP = input.ReadUInt64();
             break;
           }
-          case 61: {
-            CurrentHP = input.ReadFloat();
+          case 56: {
+            CurrentHP = input.ReadUInt64();
             break;
           }
         }
@@ -1008,12 +1008,12 @@ namespace Google.Protobuf.Protocol {
             PosY = input.ReadFloat();
             break;
           }
-          case 53: {
-            MaxHP = input.ReadFloat();
+          case 48: {
+            MaxHP = input.ReadUInt64();
             break;
           }
-          case 61: {
-            CurrentHP = input.ReadFloat();
+          case 56: {
+            CurrentHP = input.ReadUInt64();
             break;
           }
         }
@@ -4470,10 +4470,10 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "damage" field.</summary>
     public const int DamageFieldNumber = 2;
-    private float damage_;
+    private ulong damage_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Damage {
+    public ulong Damage {
       get { return damage_; }
       set {
         damage_ = value;
@@ -4496,7 +4496,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (PlayerId != other.PlayerId) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Damage, other.Damage)) return false;
+      if (Damage != other.Damage) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4505,7 +4505,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (PlayerId != 0UL) hash ^= PlayerId.GetHashCode();
-      if (Damage != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Damage);
+      if (Damage != 0UL) hash ^= Damage.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -4528,9 +4528,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteUInt64(PlayerId);
       }
-      if (Damage != 0F) {
-        output.WriteRawTag(21);
-        output.WriteFloat(Damage);
+      if (Damage != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Damage);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -4546,9 +4546,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteUInt64(PlayerId);
       }
-      if (Damage != 0F) {
-        output.WriteRawTag(21);
-        output.WriteFloat(Damage);
+      if (Damage != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Damage);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -4563,8 +4563,8 @@ namespace Google.Protobuf.Protocol {
       if (PlayerId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(PlayerId);
       }
-      if (Damage != 0F) {
-        size += 1 + 4;
+      if (Damage != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Damage);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -4581,7 +4581,7 @@ namespace Google.Protobuf.Protocol {
       if (other.PlayerId != 0UL) {
         PlayerId = other.PlayerId;
       }
-      if (other.Damage != 0F) {
+      if (other.Damage != 0UL) {
         Damage = other.Damage;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -4603,8 +4603,8 @@ namespace Google.Protobuf.Protocol {
             PlayerId = input.ReadUInt64();
             break;
           }
-          case 21: {
-            Damage = input.ReadFloat();
+          case 16: {
+            Damage = input.ReadUInt64();
             break;
           }
         }
@@ -4626,8 +4626,8 @@ namespace Google.Protobuf.Protocol {
             PlayerId = input.ReadUInt64();
             break;
           }
-          case 21: {
-            Damage = input.ReadFloat();
+          case 16: {
+            Damage = input.ReadUInt64();
             break;
           }
         }
