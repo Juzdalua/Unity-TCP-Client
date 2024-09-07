@@ -105,4 +105,16 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         byte[] data = hitPkt.ToByteArray();
         await ClientManager.Instance.SendPacket(packetId, data);
     }
+
+    public async void EatHealPack(ulong playerId, RoomItem healPackInfo)
+    {
+        C_EAT_ROOM_ITEM earRoomItemPkt = new C_EAT_ROOM_ITEM()
+        {
+            PlayerId = playerId,
+            Item = healPackInfo
+        };
+        PacketId packetId = PacketId.PKT_C_EAT_ROOM_ITEM;
+        byte[] data = earRoomItemPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
+    }
 }

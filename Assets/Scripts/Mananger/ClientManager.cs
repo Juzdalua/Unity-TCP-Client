@@ -15,6 +15,9 @@ public enum SceneType
 public enum PacketId
 {
     PKT_S_SERVER_CHAT = 9999,
+    PKT_S_CREATE_ROOM = 9998,
+
+    PKT_S_ENV = 9000,
 
     PKT_C_TEST = 1000,
     PKT_S_TEST = 1001,
@@ -39,6 +42,12 @@ public enum PacketId
 
     PKT_C_HIT = 1014,
     PKT_S_HIT = 1015,
+
+    PKT_C_EAT_ROOM_ITEM = 1016,
+    PKT_S_EAT_ROOM_ITEM = 1017,
+
+    PKT_C_USE_ITEM = 1018,
+    PKT_S_USE_ITEM = 1019,
 };
 
 public class ClientManager : Singleton<ClientManager>

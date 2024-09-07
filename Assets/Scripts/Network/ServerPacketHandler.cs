@@ -9,6 +9,11 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
     {
         switch (id)
         {
+            default:
+                AlertManager.Instance.AlertPopup("잘못된 정보");
+                Debug.Log($"Unknown packet id: {id}");
+                break;
+
             case PacketId.PKT_S_SERVER_CHAT:
                 S_SERVER_CHAT serverChatPkt = S_SERVER_CHAT.Parser.ParseFrom(data);
 
@@ -36,6 +41,19 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 //    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
                 //    Debug.Log($"Error Code: CHAT");
                 //}
+                break;
+
+            case PacketId.PKT_S_CREATE_ROOM:
+                S_CREATE_ROOM room = S_CREATE_ROOM.Parser.ParseFrom(data);
+                if(room.Item != null)
+                {
+                    RoomManager.Instance.CreateRoom(room);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(signup.Error.ErrorMsg);
+                    Debug.Log($"Error Code: Create Room");
+                }
                 break;
 
             case PacketId.PKT_S_TEST:
@@ -144,9 +162,18 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 }
                 break;
 
-            default:
-                AlertManager.Instance.AlertPopup("잘못된 정보");
-                Debug.Log($"Unknown packet id: {id}");
+            case PacketId.PKT_S_EAT_ROOM_ITEM:
+                S_EAT_ROOM_ITEM useItemPkt = S_EAT_ROOM_ITEM.Parser.ParseFrom(data);
+                //TODO
+                if (useItemPkt.Player != null)
+                {
+                    PlayerManager.Instance.EatHealPackUpdate(useItemPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: SHOT");
+                }
                 break;
         }
     }

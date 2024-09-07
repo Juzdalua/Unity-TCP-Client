@@ -30,8 +30,12 @@ public class PlayerManager : Singleton<PlayerManager>
         // Player Set
         player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetMyPlayerId());
         player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetMyPlayerName());
+        
+        // Set UI
         player.GetComponent<Player>().SetPlayerNameUI(
                     PlayerManager.Instance.GetMyPlayerName() == null ? "UNKNOWN" : PlayerManager.Instance.GetMyPlayerName() == "" ? "UNKNOWN" : PlayerManager.Instance.GetMyPlayerName());
+        player.GetComponent<Player>().SetPlayerCurrentHPUI(pkt.Player.CurrentHP);
+        player.GetComponent<Player>().SetPlayerMaxHPUI(pkt.Player.MaxHP);
 
         ClientPacketHandler.Instance.EnterGame(playerId);
     }
@@ -57,8 +61,12 @@ public class PlayerManager : Singleton<PlayerManager>
                 // Player Set
                 player.GetComponent<PlayerController>().SetPlayerId(pkt.Players[i].Id);
                 player.GetComponent<PlayerController>().SetPlayerName(pkt.Players[i].Name);
+
+                // UI Set
                 player.GetComponent<Player>().SetPlayerNameUI(
                     pkt.Players[i].Name == null ? "UNKNOWN" : pkt.Players[i].Name == "" ? "UNKNOWN" : pkt.Players[i].Name);
+                player.GetComponent<Player>().SetPlayerCurrentHPUI(pkt.Players[i].CurrentHP);
+                player.GetComponent<Player>().SetPlayerMaxHPUI(pkt.Players[i].MaxHP);
             }
             else
             {
@@ -148,28 +156,16 @@ public class PlayerManager : Singleton<PlayerManager>
     public void HitBulletUpdate(S_HIT pkt)
     {
         GameObject player = _players[pkt.PlayerId];
-        StartCoroutine(OnDamage(player, pkt));
+        player.GetComponent<Player>().HitBulletPlayer();
 
-        // TODO player HPBar
+        player.GetComponent<Player>().SetPlayerCurrentHPUI(pkt.CurrentHP);
     }
 
-    IEnumerator OnDamage(GameObject player, S_HIT pkt)
+    // Eat HealPack
+    public void EatHealPackUpdate(S_EAT_ROOM_ITEM pkt)
     {
-        //player.GetComponent<SpriteRenderer>().color = Color.black;
-        player.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0);
-        yield return new WaitForSeconds(0.1f);
-
-        if (pkt.State == Google.Protobuf.Protocol.PlayerState.Dead)
-        {
-            //player.GetComponent<SpriteRenderer>().color = Color.white;
-            player.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
-            // TODO Dead
-        }
-        else
-        {
-            //player.GetComponent<SpriteRenderer>().color = Color.white;
-            player.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
-        }
+        GameObject player = _players[pkt.Player.Id];
+        player.GetComponent<Player>().SetPlayerCurrentHPUI(pkt.Player.CurrentHP);
     }
 
     // 플레이어 제거 (필요시)

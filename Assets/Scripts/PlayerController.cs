@@ -1,3 +1,4 @@
+using Google.Protobuf.Protocol;
 using UnityEngine;
 public enum MoveDir
 {
@@ -29,11 +30,9 @@ public class PlayerController : MonoBehaviour
     bool _moveKeyPressed = false;
     bool _updated = false;
 
-    bool canMove = false;
     int posX;
     int posY;
     Vector3Int cellPos;
-
 
     void Start()
     {
@@ -185,6 +184,15 @@ public class PlayerController : MonoBehaviour
         if (PlayerManager.Instance.GetMyPlayerId() == hitPlayerId)
         {
             ClientPacketHandler.Instance.HitBullet(PlayerManager.Instance.GetMyPlayerId(), damage);
+        }
+    }
+    
+    // EatHealPack
+    public void EatHealPack(ulong eatPlayerId, RoomItem healPackInfo)
+    {
+        if (PlayerManager.Instance.GetMyPlayerId() == eatPlayerId)
+        {
+            ClientPacketHandler.Instance.EatHealPack(eatPlayerId, healPackInfo);
         }
     }
 }

@@ -1,3 +1,6 @@
+using Google.Protobuf.Protocol;
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -5,6 +8,8 @@ public class Player : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI playerNameTMP;
+    [SerializeField] private TextMeshProUGUI currentHPTMP;
+    [SerializeField] private TextMeshProUGUI maxHPTMP;
 
     [Header("Body")]
     private SpriteRenderer _sprite;
@@ -34,13 +39,49 @@ public class Player : MonoBehaviour
         rightHand.flipX = left;
         rightHand.sortingOrder = left ? 6 : 4;
     }
+
+    public bool IsStanceLeft()
+    {
+        return _sprite.flipX;
+    }
     public void SetPlayerNameUI(string name)
     {
         playerNameTMP.text = name;
     }
 
-    public bool IsStanceLeft()
+    public void SetPlayerCurrentHPUI(ulong currentHP)
     {
-        return _sprite.flipX;
+        currentHPTMP.text = currentHP.ToString();
+    }
+
+    public void SetPlayerMaxHPUI(ulong maxHP)
+    {
+        maxHPTMP.text = maxHP.ToString();
+    }
+
+    public void HitBulletPlayer()
+    {
+        StartCoroutine(OnDamage());
+    }
+
+    IEnumerator OnDamage()
+    {
+        _sprite.color = Color.black;
+        //_sprite.color = new Color(0, 0, 0);
+        yield return new WaitForSeconds(0.1f);
+
+        _sprite.color = Color.white;
+
+        //if (pkt.State == Google.Protobuf.Protocol.PlayerState.Dead)
+        //{
+        //    //player.GetComponent<SpriteRenderer>().color = Color.white;
+        //    player.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+        //    // TODO Dead
+        //}
+        //else
+        //{
+        //    //player.GetComponent<SpriteRenderer>().color = Color.white;
+        //    player.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+        //}
     }
 }

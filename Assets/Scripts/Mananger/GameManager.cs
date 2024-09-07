@@ -1,10 +1,15 @@
 using Google.Protobuf.Protocol;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
+    [Header("Login")]
     private bool isStart = false;
     public static S_LOGIN loginPkt;
+
+    
 
     private void Update()
     {    
