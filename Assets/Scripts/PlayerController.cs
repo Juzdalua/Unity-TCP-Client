@@ -100,9 +100,12 @@ public class PlayerController : MonoBehaviour
             else if (dir == MoveDir.RIGHT)
                 GetComponent<Player>().FlipX(false);
 
-            transform.position += moveDir.normalized * speed * Time.deltaTime;
-            _state = PlayerState.MOVE;
-            _updated = true;
+            if (CanGo(destPos))
+            {
+                transform.position += moveDir.normalized * speed * Time.deltaTime;
+                _state = PlayerState.MOVE;
+                _updated = true;
+            }
         }
     }
 
@@ -132,20 +135,29 @@ public class PlayerController : MonoBehaviour
                 destPos += Vector3Int.right;
                 break;
         }
-
-        // 목표지점으로 이동하는데 장애물이 있는지 확인
-        if (MapManager.Instance.CanGo(destPos))
+        
+        if (CanGo(destPos))
         {
-            if (PlayerManager.Instance.CanGo(destPos))
-            {
-                cellPos = destPos;
-                posX = destPos.x;
-                posY = destPos.y;
-                _updated = true;
-            }
+            cellPos = destPos;
+            posX = destPos.x;
+            posY = destPos.y;
+            _updated = true;
         }
 
         CheckUpdatedFlag();
+    }
+
+    // 목표지점으로 이동하는데 장애물이 있는지 확인
+    private bool CanGo(Vector3 destPos)
+    {
+        if (MapManager.Instance.CanGo(destPos))
+        {
+            if (PlayerManager.Instance.CanGo(destPos + new Vector3(0.5f, 0.5f, 0)))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void CheckUpdatedFlag()

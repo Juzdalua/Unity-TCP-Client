@@ -21,14 +21,19 @@ public class RoomManager : Singleton<RoomManager>
 
     public void CreateRoom(S_CREATE_ROOM pkt)
     {
+        Debug.Log(pkt);
         for (int i = 0; i < pkt.Item.Count; i++)
         {
             RoomItem roomItem = pkt.Item[i];
+            Debug.Log(roomItem);
             if (roomItem != null)
             {
                 _healPackControllers[roomItem.RoomItemId].SetRoomItem(roomItem);
-                _healPackControllers[roomItem.RoomItemId].gameObject.SetActive(true);
-                _healPackControllers[roomItem.RoomItemId].GetComponent<HealPackController>().CreateHealPack();
+                if (roomItem.State == RoomItemState.Available)
+                {
+                    _healPackControllers[roomItem.RoomItemId].gameObject.SetActive(true);
+                    _healPackControllers[roomItem.RoomItemId].GetComponent<HealPackController>().CreateHealPack();
+                }
             }
 
         }
