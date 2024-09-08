@@ -21,11 +21,9 @@ public class RoomManager : Singleton<RoomManager>
 
     public void CreateRoom(S_CREATE_ROOM pkt)
     {
-        Debug.Log(pkt);
         for (int i = 0; i < pkt.Item.Count; i++)
         {
             RoomItem roomItem = pkt.Item[i];
-            Debug.Log(roomItem);
             if (roomItem != null)
             {
                 _healPackControllers[roomItem.RoomItemId].SetRoomItem(roomItem);
