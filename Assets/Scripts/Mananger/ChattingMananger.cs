@@ -250,7 +250,12 @@ public class ChattingManager : Singleton<ChattingManager>
 
     public void SetCurrentInputType()
     {
-        currentInputType = (int)currentInputType < (int)ChatType.Count - 3 ? currentInputType + 1 : 0;
+        // TODO
+        bool getGuild = false;
+        if (getGuild)
+            currentInputType = (int)currentInputType < (int)ChatType.Count - 3 ? currentInputType + 1 : 0;
+        else
+            currentInputType = (int)currentInputType < (int)ChatType.Count - 4 ? currentInputType + 1 : 0;
 
         // button text change
         chatTypeButton.GetComponentInChildren<TextMeshProUGUI>().text = currentInputType.ToString();

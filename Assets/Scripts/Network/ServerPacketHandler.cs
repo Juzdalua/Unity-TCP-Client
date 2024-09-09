@@ -155,7 +155,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 else
                 {
                     //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
-                    Debug.Log($"Error Code: SHOT");
+                    Debug.Log($"Error Code: PKT_S_HIT");
                 }
                 break;
 
@@ -168,7 +168,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 else
                 {
                     //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
-                    Debug.Log($"Error Code: SHOT");
+                    Debug.Log($"Error Code: PKT_S_EAT_ROOM_ITEM");
                 }
                 break;
 
@@ -181,21 +181,21 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 else
                 {
                     //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
-                    Debug.Log($"Error Code: SHOT");
+                    Debug.Log($"Error Code: CREATE PARTY");
                 }
                 break;
 
             case PacketId.PKT_S_JOIN_PARTY:
-                //S_CREATE_PARTY createPartyPkt = S_CREATE_PARTY.Parser.ParseFrom(data);
-                //if (createPartyPkt.Success)
-                //{
-                //    PartyManager.Instance.CreatePartyProcess(createPartyPkt);
-                //}
-                //else
-                //{
-                //    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
-                //    Debug.Log($"Error Code: SHOT");
-                //}
+                S_JOIN_PARTY joinPartyPkt = S_JOIN_PARTY.Parser.ParseFrom(data);
+                if (joinPartyPkt.Success)
+                {
+                    PartyManager.Instance.JoinPartyProcess(joinPartyPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: JOIN PARTY");
+                }
                 break;
 
             case PacketId.PKT_S_WITHDRAW_PARTY:
@@ -207,7 +207,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 else
                 {
                     //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
-                    Debug.Log($"Error Code: SHOT");
+                    Debug.Log($"Error Code: WITHDRAW PARTY");
                 }
                 break;
 
@@ -220,7 +220,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 else
                 {
                     //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
-                    Debug.Log($"Error Code: SHOT");
+                    Debug.Log($"Error Code: MY PARTY");
                 }
                 break;
 
@@ -233,7 +233,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 else
                 {
                     //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
-                    Debug.Log($"Error Code: SHOT");
+                    Debug.Log($"Error Code: ALL PARTY");
                 }
                 break;
         }

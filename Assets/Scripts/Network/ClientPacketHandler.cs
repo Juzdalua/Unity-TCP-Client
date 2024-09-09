@@ -129,15 +129,16 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void JoinParty(ulong playerId)
+    public async void JoinParty(ulong playerId, ulong partyId)
     {
-        //C_CREATE_PARTY createPartyPkt = new C_CREATE_PARTY()
-        //{
-        //    PlayerId = playerId,
-        //};
-        //PacketId packetId = PacketId.PKT_C_CREATE_PARTY;
-        //byte[] data = createPartyPkt.ToByteArray();
-        //await ClientManager.Instance.SendPacket(packetId, data);
+        C_JOIN_PARTY joinPartyPkt = new C_JOIN_PARTY()
+        {
+            PlayerId = playerId,
+            PartyId = partyId
+        };
+        PacketId packetId = PacketId.PKT_C_JOIN_PARTY;
+        byte[] data = joinPartyPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
     }
 
     public async void WithdrawParty(ulong playerId, ulong partyId)

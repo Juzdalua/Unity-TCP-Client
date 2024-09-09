@@ -33,6 +33,10 @@ public class PartyManager : Singleton<PartyManager>
     private Dictionary<ulong, GameObject> allPartyDic = new Dictionary<ulong, GameObject>();
     private Dictionary<ulong, List<GameObject>> partyDetailDic = new Dictionary<ulong, List<GameObject>>();
 
+    [Header("Join Party")]
+    [SerializeField] private Button joinPartyButton;
+    private ulong lastClickJoinPartyId = 0;
+
     [Header("Create Delete Button")]
     [SerializeField] private Button createPartyButton;
     [SerializeField] private Button withdrawPartyButton;
@@ -55,6 +59,11 @@ public class PartyManager : Singleton<PartyManager>
                 ClosePartyCanvas();
             }
         }
+
+        if(myPartyId != 0)
+        {
+            joinPartyButton.gameObject.SetActive(false);
+        }
     }
 
     public void OpenPartyCanvas()
@@ -64,6 +73,7 @@ public class PartyManager : Singleton<PartyManager>
         myPartyContents.SetActive(true);
         findPartyContents.SetActive(false);
         partyDetailContents.SetActive(false);
+        joinPartyButton.gameObject.SetActive(false);
         ShowParty("my");
     }
 
@@ -97,6 +107,7 @@ public class PartyManager : Singleton<PartyManager>
             myPartyContents.SetActive(true);
             findPartyContents.SetActive(false);
             partyDetailContents.SetActive(false);
+            joinPartyButton.gameObject.SetActive(false);
             return;
         }
 
@@ -245,6 +256,12 @@ public class PartyManager : Singleton<PartyManager>
 
     public void OnClickFindPartyDetail(ulong partyId)
     {
+        if (partyId != myPartyId)
+        {
+            joinPartyButton.gameObject.SetActive(true);
+            lastClickJoinPartyId = partyId;
+        }
+
         foreach (var partyDetail in partyDetailDic)
         {
             if (partyDetail.Key == partyId)
@@ -263,6 +280,15 @@ public class PartyManager : Singleton<PartyManager>
             }
         }
     }
+
+    public void OnClickPartyJoinButton()
+    {
+        if (lastClickJoinPartyId == 0 || !allPartyDic.ContainsKey(lastClickJoinPartyId))
+            return;
+
+        ClientPacketHandler.Instance.JoinParty(PlayerManager.Instance.GetMyPlayerId(), lastClickJoinPartyId);
+    }
+
 
     // My Party Contents
     public void CreateParty()
@@ -297,23 +323,15 @@ public class PartyManager : Singleton<PartyManager>
         withdrawPartyButton.gameObject.SetActive(true);
     }
 
-    public void JoinParty()
-    {
 
-    }
-
-    public void JoinPartyProcess()
+    public void JoinPartyProcess(S_JOIN_PARTY pkt)
     {
-        emptyMyPartyPrefab.SetActive(false);
-        for (int i = 0; i < 1; i++)
+        if(PlayerManager.Instance.GetMyPlayerId() == pkt.Players.Id)
         {
-            GameObject partyNamePrefab = Instantiate(addMyPartyNamePrefab, myPartyContents.transform);
-            partyNamePrefab.GetComponentInChildren<TextMeshProUGUI>().text = "new player";
-            //parties[pkt.PartyId] = partyNamePrefab;
+            myPartyId = pkt.PartyId;
         }
 
-        createPartyButton.gameObject.SetActive(false);
-        withdrawPartyButton.gameObject.SetActive(true);
+        ClientPacketHandler.Instance.GetMyParty(PlayerManager.Instance.GetMyPlayerId());
     }
 
     public void WithdrawParty()
@@ -362,7 +380,4 @@ public class PartyManager : Singleton<PartyManager>
             withdrawPartyButton.gameObject.SetActive(true);
         }
     }
-
-
-    // Find Party Contents
 }
