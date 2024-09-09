@@ -60,6 +60,9 @@ public enum PacketId
 
     PKT_C_MY_PARTY = 1026,
     PKT_S_MY_PARTY = 1027,
+
+    PKT_C_ALL_PARTY = 1028,
+    PKT_S_ALL_PARTY = 1029,
 };
 
 public class ClientManager : Singleton<ClientManager>

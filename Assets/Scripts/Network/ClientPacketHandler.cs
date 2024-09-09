@@ -162,4 +162,15 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         byte[] data = getMyPartyPkt.ToByteArray();
         await ClientManager.Instance.SendPacket(packetId, data);
     }
+
+    public async void GetAllParty(ulong playerId)
+    {
+        C_ALL_PARTY getAllPartyPkt = new C_ALL_PARTY()
+        {
+            PlayerId = playerId,
+        };
+        PacketId packetId = PacketId.PKT_C_ALL_PARTY;
+        byte[] data = getAllPartyPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
+    }
 }

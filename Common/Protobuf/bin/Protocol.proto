@@ -61,6 +61,13 @@ enum RoomItemState
 	ROOM_ITEM_STATE_RESPAWN_PENDING = 2;
 };
 
+enum PartyStatus
+{
+	PARTY_STATUS_NONE = 0;
+	PARTY_STATUS_AVAILABLE = 1;
+	PARTY_STATUS_UNAVAILABLE = 2;
+}
+
 // ----------------------
 
 message ErrorObj
@@ -105,6 +112,20 @@ message RoomItem
 	float posY = 5;
 	RoomItemState state = 6;
 }
+
+message PartyPlayer
+{
+	uint64 playerId = 1;
+}
+
+message Party
+{
+	uint64 partyId = 1;
+	PartyStatus partyStatus = 2;
+	repeated PartyPlayer partyPlayers = 3;
+}
+
+// ------------------------
 
 message S_SERVER_CHAT
 {
@@ -286,4 +307,16 @@ message S_MY_PARTY
 	ErrorObj error = 2;
 	uint64 partyId = 3;
 	repeated Player players = 4;
+}
+
+message C_ALL_PARTY
+{
+	uint64 playerId = 1;
+}
+
+message S_ALL_PARTY
+{
+	bool success = 1;	
+	ErrorObj error = 2;
+	repeated Party parties = 3;
 }

@@ -24,7 +24,7 @@ public class PlayerManager : Singleton<PlayerManager>
         GameObject prefab = playerPrefab;
         GameObject player = Instantiate(prefab, new Vector2(pkt.Player.PosX, pkt.Player.PosY), Quaternion.identity);
 
-        player.name = pkt.Player.Id.ToString();
+        player.name = pkt.Player.Name.ToString();
         _players[pkt.Player.Id] = player;
 
         // Player Set
@@ -55,7 +55,7 @@ public class PlayerManager : Singleton<PlayerManager>
                 // 새로운 플레이어 생성
                 GameObject player = Instantiate(prefab, new Vector2(pkt.Players[i].PosX, pkt.Players[i].PosY), Quaternion.identity);
 
-                player.name = pkt.Players[i].Id.ToString();
+                player.name = pkt.Players[i].Name.ToString();
                 _players[pkt.Players[i].Id] = player;
 
                 // Player Set
@@ -219,5 +219,12 @@ public class PlayerManager : Singleton<PlayerManager>
                 return false;
         }
         return true;
+    }
+
+    public string GetPlayerNameByPlayerId(ulong playerId)
+    {
+        if(_players.ContainsKey(playerId))
+            return _players[playerId].gameObject.name;
+        return null;
     }
 }

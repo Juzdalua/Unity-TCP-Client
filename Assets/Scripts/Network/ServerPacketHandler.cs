@@ -223,6 +223,19 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                     Debug.Log($"Error Code: SHOT");
                 }
                 break;
+
+            case PacketId.PKT_S_ALL_PARTY:
+                S_ALL_PARTY allPartyPkt = S_ALL_PARTY.Parser.ParseFrom(data);
+                if (allPartyPkt.Success)
+                {
+                    PartyManager.Instance.ShowFindPartyProcess(allPartyPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: SHOT");
+                }
+                break;
         }
     }
 }
