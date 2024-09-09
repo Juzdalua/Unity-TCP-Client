@@ -24,6 +24,45 @@ enum ChatType
 	CHAT_TYPE_SYSTEM = 5;
 }
 
+enum PlayerState
+{
+	PLAYER_STATE_NONE = 0;
+	PLAYER_STATE_LIVE = 1;
+	PLAYER_STATE_DEAD = 2;
+}
+
+enum MoveDir
+{
+	UP = 0;
+	DOWN = 1;
+	LEFT = 2;
+	RIGHT = 3;
+}
+
+enum ItemType
+{
+	ITEM_TYPE_NONE = 0;
+	ITEM_TYPE_HEAL = 1;
+}
+
+enum ItemEffect
+{
+	ITEM_EFFECT_NONE = 0;
+	ITEM_EFFECT_HP = 1;
+	ITEM_EFFECT_MP = 2;
+	ITEM_EFFECT_ATK = 3;
+	ITEM_EFFECT_DEF = 4;
+}
+
+enum RoomItemState 
+{
+	ROOM_ITEM_STATE_NONE = 0;	
+	ROOM_ITEM_STATE_AVAILABLE = 1;
+	ROOM_ITEM_STATE_RESPAWN_PENDING = 2;
+};
+
+// ----------------------
+
 message ErrorObj
 {
 	int64 errorCode = 1;
@@ -44,22 +83,38 @@ message Player
 	string name = 3;
 	float posX = 4;
 	float posY = 5;
-	float maxHP = 6;
-	float currentHP = 7;
+	uint64 maxHP = 6;
+	uint64 currentHP = 7;
 }
 
-enum MoveDir
+message Item
 {
-	UP = 0;
-	DOWN = 1;
-	LEFT = 2;
-	RIGHT = 3;
+	uint64 itemId = 1;
+	ItemType type = 2;
+	ItemEffect effect = 3;
+	uint64 value = 4;
+	uint64 amount = 5;
+}
+
+message RoomItem
+{
+	uint64 roomId = 1;
+	uint64 roomItemId = 2;
+	Item item = 3;
+	float posX = 4;
+	float posY = 5;
+	RoomItemState state = 6;
 }
 
 message S_SERVER_CHAT
 {
 	ChatType type = 1;
 	string msg = 2;
+}
+
+message S_CREATE_ROOM
+{
+	repeated RoomItem item = 1;
 }
 
 message C_SIGNUP
@@ -104,7 +159,6 @@ message C_CHAT
 	string playerName = 3;
 	string msg = 4;
 }
-
 message S_CHAT
 {
 	ChatType type = 1;
@@ -143,4 +197,93 @@ message S_SHOT
 	float spawnPosY = 3;
 	float targetPosX = 4;
 	float targetPosY = 5;
+}
+
+message C_HIT
+{
+	uint64 playerId = 1;
+	uint64 damage = 2;
+}
+
+message S_HIT
+{
+	uint64 playerId = 1;
+	uint64 currentHP = 2;
+	PlayerState state = 3;
+}
+
+message C_EAT_ROOM_ITEM
+{
+	uint64 playerId = 1;
+	RoomItem item = 2;
+}
+
+message S_EAT_ROOM_ITEM
+{
+	Player player = 1;
+}
+
+message C_USE_ITEM
+{
+	uint64 playerId = 1;
+	Item item = 2;
+}
+
+message S_USE_ITEM
+{
+	Player player = 1;
+}
+
+message C_CREATE_PARTY
+{
+	uint64 playerId = 1;
+}
+
+message S_CREATE_PARTY
+{
+	bool success = 1;
+	uint64 partyId = 2;
+	ErrorObj error = 3;
+}
+
+message C_JOIN_PARTY
+{
+	uint64 playerId = 1;
+	uint64 partyId = 2;
+}
+
+message S_JOIN_PARTY
+{
+	bool success = 1;	
+	ErrorObj error = 2;
+	uint64 partyId = 3;
+	Player players = 4;
+}
+
+message C_WITHDRAW_PARTY
+{
+	uint64 playerId = 1;
+	uint64 partyId = 2;
+}
+
+message S_WITHDRAW_PARTY
+{
+	bool success = 1;	
+	ErrorObj error = 2;
+	uint64 partyId = 3;
+	repeated Player players = 4;
+	uint64 withdrawPlayerId = 5;
+}
+
+message C_MY_PARTY
+{
+	uint64 playerId = 1;
+}
+
+message S_MY_PARTY
+{
+	bool success = 1;	
+	ErrorObj error = 2;
+	uint64 partyId = 3;
+	repeated Player players = 4;
 }

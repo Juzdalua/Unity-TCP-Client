@@ -122,7 +122,6 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 
             case PacketId.PKT_S_MOVE:
                 S_MOVE movePkt = S_MOVE.Parser.ParseFrom(data);
-                //TODO
                 if (movePkt.Player != null)
                 {
                     PlayerManager.Instance.MoveUpdatePlayer(movePkt.Player);
@@ -136,7 +135,6 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 
             case PacketId.PKT_S_SHOT:
                 S_SHOT shotPkt = S_SHOT.Parser.ParseFrom(data);
-                //TODO
                 if (shotPkt.PlayerId != 0)
                 {
                     PlayerManager.Instance.ShotUpdate(shotPkt);
@@ -150,7 +148,6 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 
             case PacketId.PKT_S_HIT:
                 S_HIT hitPkt = S_HIT.Parser.ParseFrom(data);
-                //TODO
                 if (hitPkt.PlayerId != 0)
                 {
                     PlayerManager.Instance.HitBulletUpdate(hitPkt);
@@ -164,10 +161,61 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 
             case PacketId.PKT_S_EAT_ROOM_ITEM:
                 S_EAT_ROOM_ITEM useItemPkt = S_EAT_ROOM_ITEM.Parser.ParseFrom(data);
-                //TODO
                 if (useItemPkt.Player != null)
                 {
                     PlayerManager.Instance.EatHealPackUpdate(useItemPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: SHOT");
+                }
+                break;
+
+            case PacketId.PKT_S_CREATE_PARTY:
+                S_CREATE_PARTY createPartyPkt = S_CREATE_PARTY.Parser.ParseFrom(data);
+                if (createPartyPkt.Success)
+                {
+                    PartyManager.Instance.CreatePartyProcess(createPartyPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: SHOT");
+                }
+                break;
+
+            case PacketId.PKT_S_JOIN_PARTY:
+                //S_CREATE_PARTY createPartyPkt = S_CREATE_PARTY.Parser.ParseFrom(data);
+                //if (createPartyPkt.Success)
+                //{
+                //    PartyManager.Instance.CreatePartyProcess(createPartyPkt);
+                //}
+                //else
+                //{
+                //    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                //    Debug.Log($"Error Code: SHOT");
+                //}
+                break;
+
+            case PacketId.PKT_S_WITHDRAW_PARTY:
+                S_WITHDRAW_PARTY withdrawPartyPkt = S_WITHDRAW_PARTY.Parser.ParseFrom(data);
+                if (withdrawPartyPkt.Success)
+                {
+                    PartyManager.Instance.WithdrawPartyProcess(withdrawPartyPkt);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(chatPkt.Error.ErrorMsg);
+                    Debug.Log($"Error Code: SHOT");
+                }
+                break;
+
+            case PacketId.PKT_S_MY_PARTY:
+                S_MY_PARTY myPartyPkt = S_MY_PARTY.Parser.ParseFrom(data);
+                if (myPartyPkt.Success)
+                {
+                    PartyManager.Instance.ShowMyPartyProcess(myPartyPkt);
                 }
                 else
                 {

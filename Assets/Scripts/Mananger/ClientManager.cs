@@ -48,6 +48,18 @@ public enum PacketId
 
     PKT_C_USE_ITEM = 1018,
     PKT_S_USE_ITEM = 1019,
+
+    PKT_C_CREATE_PARTY = 1020,
+    PKT_S_CREATE_PARTY = 1021,
+
+    PKT_C_JOIN_PARTY = 1022,
+    PKT_S_JOIN_PARTY = 1023,
+
+    PKT_C_WITHDRAW_PARTY = 1024,
+    PKT_S_WITHDRAW_PARTY = 1025,
+
+    PKT_C_MY_PARTY = 1026,
+    PKT_S_MY_PARTY = 1027,
 };
 
 public class ClientManager : Singleton<ClientManager>

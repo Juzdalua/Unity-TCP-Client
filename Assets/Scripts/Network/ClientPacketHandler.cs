@@ -117,4 +117,49 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         byte[] data = earRoomItemPkt.ToByteArray();
         await ClientManager.Instance.SendPacket(packetId, data);
     }
+
+    public async void CreateParty(ulong playerId)
+    {
+        C_CREATE_PARTY createPartyPkt = new C_CREATE_PARTY()
+        {
+            PlayerId = playerId,
+        };
+        PacketId packetId = PacketId.PKT_C_CREATE_PARTY;
+        byte[] data = createPartyPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
+    }
+
+    public async void JoinParty(ulong playerId)
+    {
+        //C_CREATE_PARTY createPartyPkt = new C_CREATE_PARTY()
+        //{
+        //    PlayerId = playerId,
+        //};
+        //PacketId packetId = PacketId.PKT_C_CREATE_PARTY;
+        //byte[] data = createPartyPkt.ToByteArray();
+        //await ClientManager.Instance.SendPacket(packetId, data);
+    }
+
+    public async void WithdrawParty(ulong playerId, ulong partyId)
+    {
+        C_JOIN_PARTY joinPartyPkt = new C_JOIN_PARTY()
+        {
+            PlayerId = playerId,
+            PartyId = partyId,
+        };
+        PacketId packetId = PacketId.PKT_C_WITHDRAW_PARTY;
+        byte[] data = joinPartyPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
+    }
+
+    public async void GetMyParty(ulong playerId)
+    {
+        C_MY_PARTY getMyPartyPkt = new C_MY_PARTY()
+        {
+            PlayerId = playerId,
+        };
+        PacketId packetId = PacketId.PKT_C_MY_PARTY;
+        byte[] data = getMyPartyPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
+    }
 }
