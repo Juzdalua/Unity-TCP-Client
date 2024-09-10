@@ -37,7 +37,7 @@ public class Bullet : MonoBehaviour
             ulong hitPlayerId = collision.gameObject.GetComponent<PlayerController>().GetPlayerId();
             if (shotPlayerId != hitPlayerId)
             {
-                collision.gameObject.GetComponent<PlayerController>().HitBullet(hitPlayerId, damage);
+                collision.gameObject.GetComponent<PlayerController>().HitBullet(shotPlayerId, hitPlayerId, damage);
             }
         }
     }

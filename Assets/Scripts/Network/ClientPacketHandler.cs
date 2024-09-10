@@ -95,12 +95,13 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void HitBullet(ulong playerId, ulong damage)
+    public async void HitBullet(ulong shotPlayerId, ulong playerId, ulong damage)
     {
         C_HIT hitPkt = new C_HIT()
         {
             PlayerId = playerId,
-            Damage = damage
+            Damage = damage,
+            ShotPlayerId = shotPlayerId,
         };
         PacketId packetId = PacketId.PKT_C_HIT;
         byte[] data = hitPkt.ToByteArray();

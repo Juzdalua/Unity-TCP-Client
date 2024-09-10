@@ -187,11 +187,11 @@ public class PlayerController : MonoBehaviour
     }
 
     // Hit Bullet
-    public void HitBullet(ulong hitPlayerId, ulong damage)
+    public void HitBullet(ulong shotPlayerId, ulong hitPlayerId, ulong damage)
     {
         if (PlayerManager.Instance.GetMyPlayerId() == hitPlayerId)
         {
-            ClientPacketHandler.Instance.HitBullet(PlayerManager.Instance.GetMyPlayerId(), damage);
+            ClientPacketHandler.Instance.HitBullet(shotPlayerId, PlayerManager.Instance.GetMyPlayerId(), damage);
         }
     }
     
