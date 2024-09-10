@@ -127,6 +127,13 @@ message Party
 
 // ------------------------
 
+message S_INVALID_ID
+{
+	uint64 playerId = 1;
+	bool success = 2;
+	ErrorObj error = 3;
+}
+
 message S_SERVER_CHAT
 {
 	ChatType type = 1;
@@ -176,6 +183,7 @@ message S_ENTER_GAME
 	ToPlayer toPlayer = 1;
 	bool success = 2;
 	repeated Player players = 3;
+	ErrorObj error = 4;
 }
 
 message C_CHAT
@@ -186,6 +194,7 @@ message C_CHAT
 	string msg = 4;
 	uint64 targetId = 5;
 }
+
 message S_CHAT
 {
 	ChatType type = 1;
@@ -193,6 +202,8 @@ message S_CHAT
 	string playerName = 3;
 	string msg = 4;
 	uint64 targetId = 5;
+	bool success = 6;
+	ErrorObj error = 7;
 }
 
 message C_MOVE
@@ -207,6 +218,8 @@ message S_MOVE
 {
 	Player player = 1;
 	MoveDir dir = 2;
+	bool success = 3;
+	ErrorObj error = 4;
 }
 
 message C_SHOT
@@ -225,6 +238,8 @@ message S_SHOT
 	float spawnPosY = 3;
 	float targetPosX = 4;
 	float targetPosY = 5;
+	bool success = 6;
+	ErrorObj error = 7;
 }
 
 message C_HIT
@@ -239,6 +254,8 @@ message S_HIT
 	uint64 playerId = 1;
 	uint64 currentHP = 2;
 	PlayerState state = 3;
+	bool success = 4;
+	ErrorObj error = 5;
 }
 
 message C_EAT_ROOM_ITEM
@@ -250,6 +267,8 @@ message C_EAT_ROOM_ITEM
 message S_EAT_ROOM_ITEM
 {
 	Player player = 1;
+	bool success = 2;
+	ErrorObj error = 3;
 }
 
 message C_USE_ITEM
@@ -261,6 +280,8 @@ message C_USE_ITEM
 message S_USE_ITEM
 {
 	Player player = 1;
+	bool success = 2;
+	ErrorObj error = 3;
 }
 
 message C_CREATE_PARTY

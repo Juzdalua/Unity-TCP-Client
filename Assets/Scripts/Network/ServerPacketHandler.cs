@@ -7,11 +7,19 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 {
     public void ProcessReceivedPacket(PacketId id, byte[] data)
     {
+        Debug.Log($"[RECV] ID: {id}");
         switch (id)
         {
             default:
                 AlertManager.Instance.AlertPopup("잘못된 정보");
                 Debug.Log($"Unknown packet id: {id}");
+                break;
+
+            case PacketId.PKT_S_INVALID_ID:
+                S_INVALID_ID invalidIdPkt = S_INVALID_ID.Parser.ParseFrom(data);
+
+                AlertManager.Instance.AlertPopup($"Invalid ID with {invalidIdPkt.Error.ErrorCode}");
+                Debug.Log($"Invalid ID with {invalidIdPkt.Error.ErrorCode}");
                 break;
 
             case PacketId.PKT_S_SERVER_CHAT:
@@ -20,7 +28,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 string message = serverChatPkt.Msg.ToString();
                 //string message1 = serverChatPkt.Msg.ToStringUtf8();
                 //string message2 = Encoding.UTF8.GetString(serverChatPkt.Msg.ToByteArray());
-                
+
                 Debug.Log(message);
                 //Debug.Log(message1);
                 //Debug.Log(message2);
@@ -45,7 +53,7 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 
             case PacketId.PKT_S_CREATE_ROOM:
                 S_CREATE_ROOM room = S_CREATE_ROOM.Parser.ParseFrom(data);
-                if(room.Item != null)
+                if (room.Item != null)
                 {
                     RoomManager.Instance.CreateRoom(room);
                 }
