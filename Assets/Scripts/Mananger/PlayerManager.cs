@@ -227,4 +227,17 @@ public class PlayerManager : Singleton<PlayerManager>
             return _players[playerId].gameObject.name;
         return null;
     }
+
+    public ulong GetPlayerIdByPlayerName(string playerName)
+    {
+        foreach(var player in _players)
+        {
+            if(player.Value.name == playerName)
+            {
+                return player.Key;
+            }
+        }
+
+        return 0;
+    }
 }

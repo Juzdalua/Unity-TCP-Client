@@ -52,7 +52,7 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void Chat(Google.Protobuf.Protocol.ChatType _type, string text)
+    public async void Chat(Google.Protobuf.Protocol.ChatType _type, string text, ulong targetId = 0)
     {
         C_CHAT chatPkt = new C_CHAT()
         {
@@ -60,6 +60,7 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
             PlayerId = PlayerManager.Instance.GetMyPlayerId(),
             PlayerName = PlayerManager.Instance.GetMyPlayerName(),
             Msg = text,
+            TargetId = targetId,
         };
         PacketId packetId = PacketId.PKT_C_CHAT;
         byte[] data = chatPkt.ToByteArray();

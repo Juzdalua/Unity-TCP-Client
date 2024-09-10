@@ -53,7 +53,7 @@ public class ChattingManager : Singleton<ChattingManager>
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if(_inputField.isFocused == false)
+            if (_inputField.isFocused == false)
             {
                 //_inputField.Select();
                 _inputField.ActivateInputField();
@@ -64,7 +64,7 @@ public class ChattingManager : Singleton<ChattingManager>
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.Tab) && _inputField.isFocused)
+        if (Input.GetKeyDown(KeyCode.Tab) && _inputField.isFocused)
         {
             SetCurrentInputType();
         }
@@ -103,7 +103,7 @@ public class ChattingManager : Singleton<ChattingManager>
         // 마지막 내용 다시 출력
         if (chat.StartsWith("/re"))
         {
-            if(lastChatData == "")
+            if (lastChatData == "")
             {
                 _inputField.text = "";
                 return;
@@ -118,16 +118,23 @@ public class ChattingManager : Singleton<ChattingManager>
             lastChatData = chat;
             string[] whisper = chat.Split(" ", 3);
 
-            if (whisper[1] == friend)
+            string targetPlayerName = whisper[1];
+            ulong targetPlayerId = PlayerManager.Instance.GetPlayerIdByPlayerName(targetPlayerName);
+
+            Debug.Log($"TARGET: {targetPlayerId}, MY: {PlayerManager.Instance.GetMyPlayerId()}");
+
+            if (targetPlayerId != 0 && targetPlayerId != PlayerManager.Instance.GetMyPlayerId())
             {
                 lastWhisperId = whisper[1];
                 //PrintChatData(ChatType.Whisper, ChatTypeToColor(ChatType.Whisper), $"[to {whisper[1]}] {whisper[2]}");
-                SendChatToServer(ChatType.Whisper, $"[to {whisper[1]}] {whisper[2]}");
+                SendChatToServer(ChatType.Whisper, whisper[2], targetPlayerId);
+                _inputField.text = "";
+                _inputField.DeactivateInputField();
             }
             else
             {
-                //PrintChatData(ChatType.System, ChatTypeToColor(ChatType.System), $"Do not find [{whisper[1]}]");
-                SendChatToServer(ChatType.System, $"Do not find [{whisper[1]}]");
+                PrintChatData(ChatType.System, ChatTypeToColor(ChatType.System), $"Do not find [{whisper[1]}]");
+                //SendChatToServer(ChatType.System, $"Do not find [{whisper[1]}]");
             }
         }
 
@@ -146,7 +153,7 @@ public class ChattingManager : Singleton<ChattingManager>
             SendChatToServer(ChatType.Whisper, $"[to {lastWhisperId}] {whisper[1]}");
         }
     }
-    public void SendChatToServer(ChatType type, string text)
+    public void SendChatToServer(ChatType type, string text, ulong targetId = 0)
     {
         Google.Protobuf.Protocol.ChatType _type;
         switch (type)
@@ -173,7 +180,7 @@ public class ChattingManager : Singleton<ChattingManager>
                 break;
         }
 
-        ClientPacketHandler.Instance.Chat(_type, text);
+        ClientPacketHandler.Instance.Chat(_type, text, targetId);
     }
 
     public void ProcessChatFromServer(S_CHAT chatPkt)
@@ -182,41 +189,41 @@ public class ChattingManager : Singleton<ChattingManager>
         {
             default:
             case Google.Protobuf.Protocol.ChatType.Normal:
-                ChattingManager.Instance.PrintChatData(
+                PrintChatData(
                     ChatType.Normal,
-                    ChattingManager.Instance.ChatTypeToColor(ChatType.Normal),
+                    ChatTypeToColor(ChatType.Normal),
                     $"{chatPkt.PlayerName}: {chatPkt.Msg}"
                 );
                 break;
 
             case Google.Protobuf.Protocol.ChatType.Party:
-                ChattingManager.Instance.PrintChatData(
+                PrintChatData(
                     ChatType.Party,
-                    ChattingManager.Instance.ChatTypeToColor(ChatType.Party),
-                    $"{chatPkt.PlayerName}: {chatPkt.Msg}"
-                );
-                break;
-
-            case Google.Protobuf.Protocol.ChatType.Guild:
-                ChattingManager.Instance.PrintChatData(
-                    ChatType.Guild,
-                    ChattingManager.Instance.ChatTypeToColor(ChatType.Guild),
+                    ChatTypeToColor(ChatType.Party),
                     $"{chatPkt.PlayerName}: {chatPkt.Msg}"
                 );
                 break;
 
             case Google.Protobuf.Protocol.ChatType.Whisper:
-                ChattingManager.Instance.PrintChatData(
+                PrintChatData(
                     ChatType.Whisper,
-                    ChattingManager.Instance.ChatTypeToColor(ChatType.Whisper),
+                    ChatTypeToColor(ChatType.Whisper),
+                    $"{chatPkt.PlayerName}: {chatPkt.Msg}"
+                );
+                break;
+
+            case Google.Protobuf.Protocol.ChatType.Guild:
+                PrintChatData(
+                    ChatType.Guild,
+                    ChatTypeToColor(ChatType.Guild),
                     $"{chatPkt.PlayerName}: {chatPkt.Msg}"
                 );
                 break;
 
             case Google.Protobuf.Protocol.ChatType.System:
-                ChattingManager.Instance.PrintChatData(
+                PrintChatData(
                     ChatType.System,
-                    ChattingManager.Instance.ChatTypeToColor(ChatType.System),
+                    ChatTypeToColor(ChatType.System),
                     $"{chatPkt.Msg}"
                 );
                 break;
@@ -271,9 +278,9 @@ public class ChattingManager : Singleton<ChattingManager>
     {
         currentViewType = (ChatType)newType;
 
-        if(currentViewType == ChatType.Normal)
+        if (currentViewType == ChatType.Normal)
         {
-            for(int i=0; i<chatList.Count; i++)
+            for (int i = 0; i < chatList.Count; i++)
             {
                 chatList[i].gameObject.SetActive(true);
             }
