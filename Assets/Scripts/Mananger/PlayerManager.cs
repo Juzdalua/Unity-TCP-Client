@@ -240,4 +240,11 @@ public class PlayerManager : Singleton<PlayerManager>
 
         return 0;
     }
+
+    public void DisconnectProcess(S_DISCONNECT pkt)
+    {
+        GameObject disconnectedPlayer = _players[pkt.PlayerId];
+        Destroy(disconnectedPlayer.gameObject);
+        _players.Remove(pkt.PlayerId);
+    }
 }

@@ -58,22 +58,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow))
         {
             dir = MoveDir.UP;
-            _updated = true;
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
             dir = MoveDir.DOWN;
-            _updated = true;
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
             dir = MoveDir.LEFT;
-            _updated = true;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             dir = MoveDir.RIGHT;
-            _updated = true;
         }
         else
         {

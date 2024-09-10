@@ -56,6 +56,19 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 }
                 break;
 
+            case PacketId.PKT_S_DISCONNECT:
+                S_DISCONNECT disconnect = S_DISCONNECT.Parser.ParseFrom(data);
+                if (disconnect.PlayerId != 0)
+                {
+                    PlayerManager.Instance.DisconnectProcess(disconnect);
+                }
+                else
+                {
+                    //AlertManager.Instance.AlertPopup(signup.Error.ErrorMsg);
+                    Debug.Log($"Error Code: Disconnect Room");
+                }
+                break;
+
             case PacketId.PKT_S_TEST:
                 S_CHAT chat = S_CHAT.Parser.ParseFrom(data);
                 Debug.Log($"Received chat message: PlayerId={chat.PlayerId}, Msg={chat.Msg}");

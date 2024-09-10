@@ -19,6 +19,8 @@ public enum PacketId
 
     PKT_S_ENV = 9000,
 
+    PKT_S_DISCONNECT = 999,
+
     PKT_C_TEST = 1000,
     PKT_S_TEST = 1001,
 
