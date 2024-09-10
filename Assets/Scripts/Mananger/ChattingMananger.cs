@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public enum ChatType
 {
@@ -96,7 +97,14 @@ public class ChattingManager : Singleton<ChattingManager>
         {
             lastChatData = chat;
             //PrintChatData(currentInputType, currentTextColor, lastChatData);
-            SendChatToServer(currentInputType, lastChatData);
+
+            ulong targetId = 0;
+            if (currentInputType == ChatType.Party)
+            {
+                targetId = PartyManager.Instance.GetMyPartyId();
+            }
+
+            SendChatToServer(currentInputType, lastChatData, targetId);
             return;
         }
 

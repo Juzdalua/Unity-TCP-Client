@@ -380,4 +380,9 @@ public class PartyManager : Singleton<PartyManager>
             withdrawPartyButton.gameObject.SetActive(true);
         }
     }
+
+    public ulong GetMyPartyId()
+    {
+        return myPartyId;
+    }
 }
