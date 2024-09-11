@@ -77,9 +77,9 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 }
                 break;
 
-            case PacketId.PKT_S_TEST:
+            case PacketId.PKT_S_PING:
                 S_CHAT chat = S_CHAT.Parser.ParseFrom(data);
-                Debug.Log($"Received chat message: PlayerId={chat.PlayerId}, Msg={chat.Msg}");
+                ClientManager.Instance.HandlePing(chat);
                 break;
 
             case PacketId.PKT_S_SIGNUP:

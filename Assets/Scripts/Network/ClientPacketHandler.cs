@@ -4,6 +4,18 @@ using UnityEngine;
 
 public class ClientPacketHandler : Singleton<ClientPacketHandler>
 {
+    public async void PingPong()
+    {
+        C_CHAT pingPkt = new C_CHAT()
+        {
+            Msg = "Ping"
+        };
+
+        PacketId packetId = PacketId.PKT_C_PING;
+        byte[] data = pingPkt.ToByteArray();
+        await ClientManager.Instance.SendPacket(packetId, data);
+    }
+
     public async void Signup(string id, string pwd)
     {
         Account account = new Account()

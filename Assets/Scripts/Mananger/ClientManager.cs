@@ -2,8 +2,10 @@ using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 public enum SceneType
@@ -22,8 +24,8 @@ public enum PacketId
 
     PKT_S_DISCONNECT = 999,
 
-    PKT_C_TEST = 1000,
-    PKT_S_TEST = 1001,
+    PKT_C_PING = 1000,
+    PKT_S_PING = 1001,
 
     PKT_C_SIGNUP = 1002,
     PKT_S_SIGNUP = 1003,
@@ -95,12 +97,17 @@ public enum ErrorCode
 
 public class ClientManager : Singleton<ClientManager>
 {
+    [Header("Server Info")]
     private Socket _clientSocket;
     private bool _isConnected = false;
     public string serverIP = "127.0.0.1"; // 서버 IP 주소
     public int serverPort = 7777;        // 서버 포트 번호
-    private float lastSendTime = 0f;
-    private float lastRecvTime = 0;
+
+    [Header("Ping")]
+    [SerializeField] TextMeshProUGUI pingText;
+    private float lastPingSendTime = 0f; // 마지막 핑 요청 시간
+    private float lastPingResponseTime = 0f; // 마지막 핑 응답 시간
+    private float ping = 0f; // 현재 핑 값 (ms 단위)
 
     [Header("Scene Type")]
     [SerializeField] private SceneType _sceneType;
@@ -124,6 +131,8 @@ public class ClientManager : Singleton<ClientManager>
     {
         // 클라이언트 상태 확인 및 핸드쉐이크 처리
         CheckSocket();
+
+        pingText.text = Mathf.RoundToInt(ping).ToString();
     }
 
     private async Task ReceivePacketLoopAsync()
@@ -143,9 +152,9 @@ public class ClientManager : Singleton<ClientManager>
         }
     }
 
-    public async void CheckSocket()
+    public void CheckSocket()
     {
-        await HeartbeatAsync();
+        HeartbeatAsync();
     }
 
     public async Task ConnectToServerAsync(string ipAddress, int port)
@@ -165,21 +174,17 @@ public class ClientManager : Singleton<ClientManager>
         }
     }
 
-    public async Task HeartbeatAsync()
+    public void HeartbeatAsync()
     {
-        float term = 1f;
-
-        if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite) && (lastSendTime == 0f || lastRecvTime - lastSendTime > term))
+        float term = 3f;
+        
+        if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite) && (lastPingSendTime == 0f || Time.time - lastPingResponseTime > term))
         {
-            C_CHAT pkt = new C_CHAT()
-            {
-                Msg = "Ping"
-            };
-
+            Debug.Log("heart beat 1");
             try
             {
-                await SendPacket(PacketId.PKT_C_TEST, pkt.ToByteArray());
-                lastSendTime = Time.time;
+                ClientPacketHandler.Instance.PingPong();
+                lastPingSendTime = Time.time;
             }
             catch (Exception e)
             {
@@ -189,49 +194,13 @@ public class ClientManager : Singleton<ClientManager>
         }
     }
 
-    //public async Task ReceivePacketAsync()
-    //{
-    //    try
-    //    {
-    //        byte[] headerBuffer = new byte[4];
-    //        int headerBytesRead = await Task.Factory.FromAsync(
-    //            (callback, state) => _clientSocket.BeginReceive(headerBuffer, 0, headerBuffer.Length, SocketFlags.None, callback, state),
-    //            ar => _clientSocket.EndReceive(ar),
-    //            null
-    //        );
+    public void HandlePing(S_CHAT pkt)
+    {
+        Debug.Log("heart beat 2");
 
-    //        if (headerBytesRead != headerBuffer.Length)
-    //        {
-    //            Debug.LogWarning("Header incomplete.");
-    //            return;
-    //        }
-
-    //        ushort size = BitConverter.ToUInt16(headerBuffer, 0);
-    //        ushort id = BitConverter.ToUInt16(headerBuffer, 2);
-
-    //        byte[] dataBuffer = new byte[size - 4];
-    //        int dataBytesRead = await Task.Factory.FromAsync(
-    //            (callback, state) => _clientSocket.BeginReceive(dataBuffer, 0, dataBuffer.Length, SocketFlags.None, callback, state),
-    //            ar => _clientSocket.EndReceive(ar),
-    //            null
-    //        );
-
-    //        if (dataBytesRead == dataBuffer.Length)
-    //        {
-    //            Debug.Log($"Received Packet ID: {id}, Size: {size}");
-    //            ServerPacketHandler.Instance.ProcessReceivedPacket((PacketId)id, dataBuffer);
-    //        }
-    //        else
-    //        {
-    //            Debug.LogWarning("Data incomplete.");
-    //        }
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        Debug.LogError($"Exception in ReceivePacketAsync: {e}");
-    //        HandleDisconnect();
-    //    }
-    //}
+        lastPingResponseTime = Time.time;
+        ping = (lastPingResponseTime - lastPingSendTime) * 1000f; // 밀리초 단위로 변환
+    }
 
 
     public async Task ReceivePacketAsync()
@@ -265,7 +234,6 @@ public class ClientManager : Singleton<ClientManager>
             {
                 MainThreadDispatcher.ExecuteOnMainThread(() =>
                 {
-                    Debug.Log($"Received Packet ID: {id}, Size: {size}");
                     ServerPacketHandler.Instance.ProcessReceivedPacket((PacketId)id, dataBuffer);
                 });
             }
@@ -283,8 +251,6 @@ public class ClientManager : Singleton<ClientManager>
             });
         }
     }
-
-
 
     public async Task SendPacket(PacketId packetId, byte[] protobufData)
     {
