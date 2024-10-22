@@ -61,9 +61,17 @@ public class MainMenuManager : Singleton<MainMenuManager>
             return;
 
         if (type == "login")
-            ClientPacketHandler.Instance.Login(id.Trim(), pwd.Trim());
+        {
+            string hashPwd = UtilManager.Instance.CreatedHashPwd(pwd);
+            //ClientPacketHandler.Instance.Login(id.Trim(), hashPwd.Trim());
+            APIManager.Instance.Signin(id.Trim(), hashPwd.Trim());
+        }
         else if (type == "signup")
-            ClientPacketHandler.Instance.Signup(id.Trim(), pwd.Trim());
+        {
+            string hashPwd = UtilManager.Instance.CreatedHashPwd(pwd);
+            //ClientPacketHandler.Instance.Signup(id.Trim(), hashPwd.Trim());
+            APIManager.Instance.Signup(id.Trim(), hashPwd.Trim());
+        }
     }
 
     void UpdateConnectedTMPUI()

@@ -102,14 +102,14 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
                 S_LOGIN login = S_LOGIN.Parser.ParseFrom(data);
                 if (login.Success)
                 {
-                    PlayerManager.Instance.SetPlayerId(login.Player.Id);
-                    PlayerManager.Instance.SetPlayerName(login.Player.Name);
+                    //PlayerManager.Instance.SetPlayerId(login.Player.Id);
+                    //PlayerManager.Instance.SetPlayerName(login.Player.Name);
 
-                    //Scene 전환
-                    ClientManager.Instance.SetSceneType(SceneType.Game);
-                    MainMenuManager.Instance.ActiveMenu();
-                    SceneManager.LoadScene("01.MainScene");
-                    GameManager.loginPkt = login;
+                    ////Scene 전환
+                    //ClientManager.Instance.SetSceneType(SceneType.Game);
+                    //MainMenuManager.Instance.ActiveMenu();
+                    //SceneManager.LoadScene("01.MainScene");
+                    //GameManager.loginPkt = login;
                 }
                 else
                 {

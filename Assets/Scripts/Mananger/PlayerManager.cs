@@ -15,29 +15,27 @@ public class PlayerManager : Singleton<PlayerManager>
     [SerializeField] ulong _playerId = 0;
     [SerializeField] string _playerName = "";
 
-    public void CreatePlayer(S_LOGIN pkt)
+    public void CreatePlayer(PlayerDTO data)
     {
-        ulong playerId = pkt.Player.Id;
-
         //TODO Player HP Set
 
         GameObject prefab = playerPrefab;
-        GameObject player = Instantiate(prefab, new Vector2(pkt.Player.PosX, pkt.Player.PosY), Quaternion.identity);
+        GameObject player = Instantiate(prefab, new Vector2(data.posX, data.posY), Quaternion.identity);
 
-        player.name = pkt.Player.Name.ToString();
-        _players[pkt.Player.Id] = player;
+        player.name = data.name;
+        _players[(ulong)data.playerId] = player;
 
         // Player Set
         player.GetComponent<PlayerController>().SetPlayerId(PlayerManager.Instance.GetMyPlayerId());
         player.GetComponent<PlayerController>().SetPlayerName(PlayerManager.Instance.GetMyPlayerName());
-        
+
         // Set UI
         player.GetComponent<Player>().SetPlayerNameUI(
                     PlayerManager.Instance.GetMyPlayerName() == null ? "UNKNOWN" : PlayerManager.Instance.GetMyPlayerName() == "" ? "UNKNOWN" : PlayerManager.Instance.GetMyPlayerName());
-        player.GetComponent<Player>().SetPlayerCurrentHPUI(pkt.Player.CurrentHP);
-        player.GetComponent<Player>().SetPlayerMaxHPUI(pkt.Player.MaxHP);
+        player.GetComponent<Player>().SetPlayerCurrentHPUI((ulong)data.currentHP);
+        player.GetComponent<Player>().SetPlayerMaxHPUI((ulong)data.maxHP);
 
-        ClientPacketHandler.Instance.EnterGame(playerId);
+        ClientPacketHandler.Instance.EnterGame(data);
     }
 
     // 플레이어 추가 또는 업데이트

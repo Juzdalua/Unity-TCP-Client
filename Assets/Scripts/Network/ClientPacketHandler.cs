@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using System;
 using UnityEngine;
 
 public class ClientPacketHandler : Singleton<ClientPacketHandler>
@@ -16,13 +17,14 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void Signup(string id, string pwd)
+    public async void Signup(string id, string hashPwd)
     {
         Account account = new Account()
         {
             Id = 0,
             Name = id,
-            Password = UtilManager.Instance.CreatedHashPwd(pwd),
+            Password = hashPwd,
+            //Password = UtilManager.Instance.CreatedHashPwd(pwd),
         };
 
         C_SIGNUP signupPkt = new C_SIGNUP()
@@ -34,14 +36,14 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void Login(string id, string pwd)
+    public async void Login(string id, string hashPwd)
     {
         Account account = new Account()
         {
             Id = 0,
             Name = id,
-            //Password = pwd,
-            Password = UtilManager.Instance.CreatedHashPwd(pwd),
+            Password = hashPwd,
+            //Password = UtilManager.Instance.CreatedHashPwd(pwd),
         };
 
         C_LOGIN loginPkt = new C_LOGIN()
@@ -53,11 +55,21 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void EnterGame(ulong playerId)
+    public async void EnterGame(PlayerDTO playerDto)
     {
+        Google.Protobuf.Protocol.Player player = new Google.Protobuf.Protocol.Player()
+        {
+            Id = (ulong)playerDto.playerId,
+            AccountId = (ulong)playerDto.accountId,
+            Name = playerDto.name,
+            PosX = playerDto.posX,
+            PosY = playerDto.posY,
+            MaxHP = (ulong)playerDto.maxHP,
+            CurrentHP = (ulong)playerDto.currentHP,
+        };
         C_ENTER_GAME enterPkt = new C_ENTER_GAME()
         {
-            PlayerId = playerId
+           Player = player,
         };
         PacketId packetId = PacketId.PKT_C_ENTER_GAME;
         byte[] data = enterPkt.ToByteArray();
