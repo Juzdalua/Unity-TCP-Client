@@ -299,7 +299,9 @@ public class PartyManager : Singleton<PartyManager>
             return;
         }
 
-        ClientPacketHandler.Instance.CreateParty(PlayerManager.Instance.GetMyPlayerId());
+        APIManager.Instance.CreateParty((int)PlayerManager.Instance.GetMyPlayerId());
+
+        
     }
 
     public void CreatePartyProcess(S_CREATE_PARTY pkt)

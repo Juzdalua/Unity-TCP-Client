@@ -25,6 +25,11 @@ public class PlayerDTO
     public int currentHP;
 }
 
+public class PartyDTO
+{
+    public int partyId;
+}
+
 public class APIManager : Singleton<APIManager>
 {
     private readonly string baseUrl = "http://localhost:4000";
@@ -43,7 +48,8 @@ public class APIManager : Singleton<APIManager>
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"Error: {request.error}");
+                ErrorDTO errorDto = JsonUtility.FromJson<ErrorDTO>(request.downloadHandler.text);
+                AlertManager.Instance.AlertPopup(errorDto.errorMsg);
             }
             else
             {
@@ -101,7 +107,8 @@ public class APIManager : Singleton<APIManager>
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
             {
-                AlertManager.Instance.AlertPopup(request.error);
+                ErrorDTO errorDto = JsonUtility.FromJson<ErrorDTO>(request.downloadHandler.text);
+                AlertManager.Instance.AlertPopup(errorDto.errorMsg);
             }
             else
             {
@@ -118,34 +125,59 @@ public class APIManager : Singleton<APIManager>
         }
     }
 
+    // Move
+    public void UpdateMove(int playerId, float posX, float posY)
+    {
+        StartCoroutine(UpdateMoveCoroutine(playerId, posX, posY));
+    }
 
-    //public void CreateAccount(string name, string password)
-    //{
-    //    StartCoroutine(CreateAccountCoroutine(name, password));
-    //}
+    private IEnumerator UpdateMoveCoroutine(int playerId, float posX, float posY)
+    {
+        string url = $"{baseUrl}/player/move";
+        WWWForm form = new WWWForm();
+        form.AddField("playerId", playerId);
+        form.AddField("posX", posX.ToString());
+        form.AddField("posY", posY.ToString());
 
-    //private IEnumerator CreateAccountCoroutine(string name, string password)
-    //{
-    //    string url = $"{baseUrl}/account"; // API ��������Ʈ
-    //    AccountDTO accountDto = new AccountDTO { Name = name, Password = password };
-    //    string jsonData = JsonUtility.ToJson(accountDto); // DTO�� JSON���� ��ȯ
+        using (UnityWebRequest request = UnityWebRequest.Post(url, form))
+        {
+            yield return request.SendWebRequest();
 
-    //    using (UnityWebRequest request = UnityWebRequest.PostWwwForm(url, jsonData))
-    //    {
-    //        request.SetRequestHeader("Content-Type", "application/json"); // ��� ����
-    //        yield return request.SendWebRequest(); // ��û ���� ���
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorDTO errorDto = JsonUtility.FromJson<ErrorDTO>(request.downloadHandler.text);
+                AlertManager.Instance.AlertPopup(errorDto.errorMsg);
+            }
+        }
+    }
 
-    //        if (request.result != UnityWebRequest.Result.Success)
-    //        {
-    //            Debug.LogError($"Error: {request.error}");
-    //        }
-    //        else
-    //        {
-    //            // ���������� ������ ���� ���
-    //            string jsonResponse = request.downloadHandler.text;
-    //            Debug.Log($"Response: {jsonResponse}");
-    //            // JSON �Ľ� �� ������ ó��
-    //        }
-    //    }
-    //}
+    // Create Party
+    public void CreateParty(int playerId)
+    {
+        StartCoroutine(CreatePartyCoroutine(playerId));
+    }
+
+    private IEnumerator CreatePartyCoroutine(int playerId)
+    {
+        string url = $"{baseUrl}/player/party";
+        WWWForm form = new WWWForm();
+        form.AddField("playerId", playerId);
+
+        using (UnityWebRequest request = UnityWebRequest.Post(url, form))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorDTO errorDto = JsonUtility.FromJson<ErrorDTO>(request.downloadHandler.text);
+                AlertManager.Instance.AlertPopup(errorDto.errorMsg);
+            }
+            else
+            {
+                PartyDTO partyData = JsonUtility.FromJson<PartyDTO>(request.downloadHandler.text);
+                ClientPacketHandler.Instance.CreateParty((ulong)playerId, (ulong)partyData.partyId);
+            }
+        }
+    }
+
 }

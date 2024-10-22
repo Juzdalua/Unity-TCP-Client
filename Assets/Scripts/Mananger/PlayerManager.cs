@@ -128,6 +128,8 @@ public class PlayerManager : Singleton<PlayerManager>
                 StartCoroutine(SmoothMove(currentTransform, targetPosition, _speed));
             }
         }
+
+        APIManager.Instance.UpdateMove((int)recvPlayer.Id, recvPlayer.PosX, recvPlayer.PosY);
     }
 
     // Shot Bullet

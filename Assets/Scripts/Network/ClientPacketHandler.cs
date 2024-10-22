@@ -144,11 +144,12 @@ public class ClientPacketHandler : Singleton<ClientPacketHandler>
         await ClientManager.Instance.SendPacket(packetId, data);
     }
 
-    public async void CreateParty(ulong playerId)
+    public async void CreateParty(ulong playerId, ulong partyId)
     {
         C_CREATE_PARTY createPartyPkt = new C_CREATE_PARTY()
         {
             PlayerId = playerId,
+            PartyId = partyId
         };
         PacketId packetId = PacketId.PKT_C_CREATE_PARTY;
         byte[] data = createPartyPkt.ToByteArray();
