@@ -180,7 +180,6 @@ public class ClientManager : Singleton<ClientManager>
         
         if (_isConnected && _clientSocket.Poll(0, SelectMode.SelectWrite) && (lastPingSendTime == 0f || Time.time - lastPingResponseTime > term))
         {
-            Debug.Log("heart beat 1");
             try
             {
                 ClientPacketHandler.Instance.PingPong();
@@ -196,8 +195,6 @@ public class ClientManager : Singleton<ClientManager>
 
     public void HandlePing(S_CHAT pkt)
     {
-        Debug.Log("heart beat 2");
-
         lastPingResponseTime = Time.time;
         ping = (lastPingResponseTime - lastPingSendTime) * 1000f; // 밀리초 단위로 변환
     }

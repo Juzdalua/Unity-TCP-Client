@@ -7,7 +7,10 @@ public class ServerPacketHandler : Singleton<ServerPacketHandler>
 {
     public void ProcessReceivedPacket(PacketId id, byte[] data)
     {
-        Debug.Log($"[RECV] ID: {id}");
+        if(id != PacketId.PKT_S_PING)
+        {
+            Debug.Log($"[RECV] ID: {id}");
+        }
         switch (id)
         {
             default:

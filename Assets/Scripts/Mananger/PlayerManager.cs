@@ -43,7 +43,6 @@ public class PlayerManager : Singleton<PlayerManager>
     // 플레이어 추가 또는 업데이트
     public void AddOrUpdatePlayer(S_ENTER_GAME pkt)
     {
-        Debug.Log(pkt);
         for (int i = 0; i < pkt.Players.Count; i++)
         {
             if (pkt.Players[i].Id == 0 || pkt.Players[i].Id == PlayerManager.Instance.GetMyPlayerId())
